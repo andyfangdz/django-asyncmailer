@@ -1,0 +1,4 @@
+include LICENSE
+include README.md
+recursive-include asyncmailer/templates *
+recursive-include asyncmailer/docs *
