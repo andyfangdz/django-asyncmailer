@@ -1,0 +1,2 @@
+# django-asyncmailer
+Async email solution w/ multiple SMTP credentials, load-balancing and blacklist.
