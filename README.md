@@ -12,7 +12,7 @@ Note that django-asyncmailer only works on django > 1.7 due to the use of ```htm
 - Add the following lines to ```$project/$project/__init__.py``` to enable ```shared_tasks``` in ```celery``` 
 ```
 from __future__ import absolute_import
-      from .celery import app as celery_app
+from .celery import app as celery_app
 ```
 - Configure celery (Be sure to use ```autodiscover_tasks```)
 - Set email backend ```EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'```
