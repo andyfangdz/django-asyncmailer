@@ -31,7 +31,7 @@ from .celery import app as celery_app
 ```python
 from asyncmailer.tasks import async_mail
 
-async_mail([user.email], # Email
+async_mail.delay([user.email], # Email
   "New Activity on Your Account", # Subject
   context_dict={ # Optional, if supplied, the templated will be rendered before sending
   "message": "Hello! \n Someone gave you a comment today! \n \"%s\"" % c.content,
