@@ -1,5 +1,11 @@
 # django-asyncmailer [![Build Status](https://travis-ci.org/andyfangdz/django-asyncmailer.svg?branch=master)](https://travis-ci.org/andyfangdz/django-asyncmailer)
-Async email solution w/ multiple SMTP credentials, load-balancing and blacklist.
+- Asynchronous email sending with celery
+- Manage multiple SMTP credentials(providers)
+- Easily add blacklist(unreachable) of email servers to providers
+- Configure Monthly or Daily quota of providers
+- Set preferences for providers
+- A built-in responsive email template
+- When sending, a random provider of a list of providers that is enabled, whose blacklist does not contain the server of the address sending to, whose quota is not exceeded, and with highest preference will be selected.
 
 # Install
 ```
