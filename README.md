@@ -38,9 +38,11 @@ async_mail([user.email], # Email
   "button_text": "View",
   "button_url": "http://www.example.com/login/?token=%s&next=/notifications/" % t.token
   },
-  template='email.html', # Optional, you can specify the template for email via this parameter. If not supplied, a default template will be used.
+  template='email.html', # Optional, you can specify the template for email via this parameter. 
+                         # If not supplied, a default template will be used.
   template_plaintext='email_pt.html' # Optional, the plaintext alternative of template.
-  # It is important to note that if you specify the template but not the plaintext template, the default template will still be used, and vise versa.
+  # It is important to note that if you specify the template but not the plaintext template, 
+  # the default plaintext template will still be used, and vise versa.
 )
 
 
