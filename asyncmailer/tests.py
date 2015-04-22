@@ -1,6 +1,10 @@
 from django.test import TestCase
 from django.db import models
-from asyncmailer.models import Provider
+try:
+    from .models import Provider
+except ValueError:
+    from asyncmailer.models import Provider
+
 
 
 # Create your tests here.
