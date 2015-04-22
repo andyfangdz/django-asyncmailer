@@ -1,9 +1,7 @@
 from django.test import TestCase
 from django.db import models
-try:
-    from .models import Provider
-except ValueError:
-    from asyncmailer.models import Provider
+from .models import Provider
+
 
 
 
