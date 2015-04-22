@@ -33,6 +33,8 @@ class Provider(models.Model):
         self.save()
 
     def within_quota(self):
+        if not self.quota:
+            return True
         return self.usage < self.quota
 
     def __str__(self):
