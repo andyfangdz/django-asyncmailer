@@ -28,7 +28,7 @@ from .celery import app as celery_app
 - Add SMTP credentials in django admin
 
 # Usage
-```
+```python
 from asyncmailer.tasks import async_mail
 
 async_mail([user.email], # Email
