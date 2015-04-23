@@ -45,4 +45,4 @@ async_mail.delay([user.email], # Email
   # the default plaintext template will still be used, and vise versa.
 )
 
-
+```
