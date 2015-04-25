@@ -1,5 +1,6 @@
 from django.test import TestCase
 from .models import Provider
+from .tasks import clear
 
 
 # Create your tests here.
@@ -64,4 +65,24 @@ class ProviderTest(TestCase):
         self.test_provider.send("test@example.com", "Test", "Test")
         post_usage = self.test_provider.usage
         self.assertEqual(post_usage - pre_usage, 1)
+        
+    def test_clear_daily_usages(self):
+        """
+        Test if clear_daily_usages works
+        """
+        self.test_provider.quota_type_is_daily = True
+        self.test_provider.usage = 100
+        self.test_provider.save()
+        clear_daily_usages()
+        self.assertEqual(self.test_provider, 0)
+    
+    def test_clear_monthly_usages(self):
+        """
+        Test if clear_monthly_usages works
+        """
+        self.test_provider.quota_type_is_daily = False
+        self.test_provider.usage = 100
+        self.test_provider.save()
+        clear_monthly_usages()
+        self.assertEqual(self.test_provider, 0)
 
