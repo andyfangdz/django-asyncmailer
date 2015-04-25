@@ -1,4 +1,4 @@
-# django-asyncmailer [![Build Status](https://travis-ci.org/andyfangdz/django-asyncmailer.svg?branch=master)](https://travis-ci.org/andyfangdz/django-asyncmailer)
+# django-asyncmailer [![Build Status](https://travis-ci.org/andyfangdz/django-asyncmailer.svg?branch=master)](https://travis-ci.org/andyfangdz/django-asyncmailer)[![Latest Version](https://pypip.in/version/django-asyncmailer/badge.svg)](https://pypi.python.org/pypi/django-asyncmailer/)[![Coverage Status](https://coveralls.io/repos/andyfangdz/django-asyncmailer/badge.svg)](https://coveralls.io/r/andyfangdz/django-asyncmailer)[![Supported Python versions](https://pypip.in/py_versions/django-asyncmailer/badge.svg)](https://pypi.python.org/pypi/django-asyncmailer/)[![Downloads](https://pypip.in/download/django-asyncmailer/badge.svg)](https://pypi.python.org/pypi/django-asyncmailer/)[![License](https://pypip.in/license/django-asyncmailer/badge.svg)](https://pypi.python.org/pypi/django-asyncmailer/)
 - Asynchronous email sending with celery
 - Manage multiple SMTP credentials(providers)
 - Easily add blacklist(unreachable) of email servers to providers
