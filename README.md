@@ -5,7 +5,7 @@
 - Configure Monthly or Daily quota of providers
 - Set preferences for providers
 - A built-in responsive email template
-- When sending, a random provider of a list of providers that is enabled, whose blacklist does not contain the server of the address sending to, whose quota is not exceeded, and with highest preference will be selected.
+- When sending, a random provider from a list of providers that is enabled, whose blacklist does not contain the server of the address sending to, whose quota is not exceeded, and with the highest preference will be selected.
 
 # Install
 ```
