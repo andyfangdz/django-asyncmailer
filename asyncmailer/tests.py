@@ -74,6 +74,7 @@ class ProviderTest(TestCase):
         self.test_provider.usage = 100
         self.test_provider.save()
         clear_daily_usages()
+        self.test_provider = Provider.objects.get(pk=self.test_provider.pk)
         self.assertEqual(self.test_provider.usage, 0)
     
     def test_clear_monthly_usages(self):
@@ -84,5 +85,6 @@ class ProviderTest(TestCase):
         self.test_provider.usage = 100
         self.test_provider.save()
         clear_monthly_usages()
+        self.test_provider = Provider.objects.get(pk=self.test_provider.pk)
         self.assertEqual(self.test_provider.usage, 0)
 
