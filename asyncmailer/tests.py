@@ -1,6 +1,6 @@
 from django.test import TestCase
 from .models import Provider
-from .tasks import clear
+from .tasks import clear_daily_usages, clear_monthly_usages
 
 
 # Create your tests here.
