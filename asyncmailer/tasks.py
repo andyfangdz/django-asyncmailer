@@ -35,13 +35,13 @@ def async_mail(email, title, context_dict=None, template='asyncmailer/email.html
 
 @periodic_task(run_every=crontab(hour=0))
 def clear_daily_usages():
-    providers = Provider.objects.fileter(quota_type_is_daily=True)
+    providers = Provider.objects.filter(quota_type_is_daily=True)
     for p in providers:
         p.reset_usage()
 
 
 @periodic_task(run_every=crontab(day_of_month=1))
 def clear_monthly_usages():
-    providers = Provider.objects.fileter(quota_type_is_daily=False)
+    providers = Provider.objects.filter(quota_type_is_daily=False)
     for p in providers:
         p.reset_usage()
