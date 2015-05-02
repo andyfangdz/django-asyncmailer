@@ -47,3 +47,7 @@ async_mail.delay([user.email], # Email
 )
 
 ```
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/andyfangdz/django-asyncmailer/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
