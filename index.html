@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Django-asyncmailer by andyfangdz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Django-asyncmailer</h1>
+      <h2 class="project-tagline">Async email solution w/ multiple SMTP credentials, load-balancing and blacklist.</h2>
+      <a href="https://github.com/andyfangdz/django-asyncmailer" class="btn">View on GitHub</a>
+      <a href="https://github.com/andyfangdz/django-asyncmailer/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/andyfangdz/django-asyncmailer/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="django-asyncmailer" class="anchor" href="#django-asyncmailer" aria-hidden="true"><span class="octicon octicon-link"></span></a>django-asyncmailer</h1>
+
+<h1>
+<a id="" class="anchor" href="#" aria-hidden="true"><span class="octicon octicon-link"></span></a>
+<a href="https://travis-ci.org/andyfangdz/django-asyncmailer"><img src="https://travis-ci.org/andyfangdz/django-asyncmailer.svg?branch=master" alt="Build Status"></a><a href="https://coveralls.io/r/andyfangdz/django-asyncmailer"><img src="https://coveralls.io/repos/andyfangdz/django-asyncmailer/badge.svg" alt="Coverage Status"></a><a href="http://badge.fury.io/py/django-asyncmailer"><img src="https://badge.fury.io/py/django-asyncmailer.svg" alt="PyPI version"></a><a href="https://pypi.python.org/pypi/django-asyncmailer"><img src="https://img.shields.io/pypi/dd/django-asyncmailer.svg" alt="PyPI Daily Download"></a><a href="https://pypi.python.org/pypi/django-asyncmailer"><img src="https://img.shields.io/pypi/dw/django-asyncmailer.svg" alt="PyPI Weekly Download"></a><a href="https://pypi.python.org/pypi/django-asyncmailer"><img src="https://img.shields.io/pypi/dm/django-asyncmailer.svg" alt="PyPI Monthly Download"></a><a href="https://bitdeli.com/free" title="Bitdeli Badge"><img src="https://d2weczhvl823v0.cloudfront.net/andyfangdz/django-asyncmailer/trend.png" alt="Bitdeli Badge"></a>
+</h1>
+
+<ul>
+<li>Asynchronous email sending with celery</li>
+<li>Manage multiple SMTP credentials(providers)</li>
+<li>Easily add blacklist(unreachable) of email servers to providers</li>
+<li>Configure Monthly or Daily quota of providers</li>
+<li>Set preferences for providers</li>
+<li>A built-in responsive email template</li>
+<li>When sending, a random provider from a list of providers that is enabled, whose blacklist does not contain the server of the address sending to, whose quota is not exceeded, and with the highest preference will be selected.</li>
+</ul>
+
+<h1>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h1>
+
+<pre><code>pip install django_asyncmailer
+</code></pre>
+
+<p>Note that django-asyncmailer only works on django &gt; 1.7 due to the use of <code>html_message</code></p>
+
+<h1>
+<a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span class="octicon octicon-link"></span></a>Quick start</h1>
+
+<ul>
+<li>Add <code>asyncmailer</code> to <code>INSTALLED_APPS</code>
+</li>
+<li>Add the following lines to <code>$project/$project/__init__.py</code> to enable <code>shared_tasks</code> in <code>celery</code> </li>
+</ul>
+
+<pre><code>from __future__ import absolute_import
+from .celery import app as celery_app
+</code></pre>
+
+<ul>
+<li>Configure celery (Be sure to use <code>autodiscover_tasks</code>)</li>
+<li>Set email backend <code>EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'</code>
+</li>
+<li>Do migration/syncdb</li>
+<li>Start celery</li>
+<li>Start celery beat</li>
+<li>Add SMTP credentials in django admin</li>
+</ul>
+
+<h1>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h1>
+
+<div class="highlight highlight-python"><pre><span class="pl-k">from</span> asyncmailer.tasks <span class="pl-k">import</span> async_mail
+
+async_mail([user.email], <span class="pl-c"># Email (delay no longer required)</span>
+  <span class="pl-s"><span class="pl-pds">"</span>New Activity on Your Account<span class="pl-pds">"</span></span>, <span class="pl-c"># Subject</span>
+  <span class="pl-smi">context_dict</span><span class="pl-k">=</span>{ <span class="pl-c"># Optional, if supplied, the templated will be rendered before sending</span>
+  <span class="pl-s"><span class="pl-pds">"</span>message<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Hello! <span class="pl-cce">\n</span> Someone gave you a comment today! <span class="pl-cce">\n</span> <span class="pl-cce">\"</span><span class="pl-c1">%s</span><span class="pl-cce">\"</span><span class="pl-pds">"</span></span> <span class="pl-k">%</span> c.content,
+  <span class="pl-s"><span class="pl-pds">"</span>button_text<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>View<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>button_url<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>http://www.example.com/login/?token=<span class="pl-c1">%s</span>&amp;next=/notifications/<span class="pl-pds">"</span></span> <span class="pl-k">%</span> t.token
+  },
+  <span class="pl-smi">template</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>email.html<span class="pl-pds">'</span></span>, <span class="pl-c"># Optional, you can specify the template for email via this parameter. </span>
+                         <span class="pl-c"># If not supplied, a default template will be used.</span>
+  <span class="pl-smi">template_plaintext</span><span class="pl-k">=</span><span class="pl-s"><span class="pl-pds">'</span>email_pt.html<span class="pl-pds">'</span></span> <span class="pl-c"># Optional, the plaintext alternative of template.</span>
+  <span class="pl-c"># It is important to note that if you specify the template but not the plaintext template, </span>
+  <span class="pl-c"># the default plaintext template will still be used, and vise versa.</span>
+)
+</pre></div>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/andyfangdz/django-asyncmailer">Django-asyncmailer</a> is maintained by <a href="https://github.com/andyfangdz">andyfangdz</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
