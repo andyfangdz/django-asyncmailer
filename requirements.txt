@@ -1,2 +1,2 @@
 django
-django-compat
+-r vendor_requirements.txt

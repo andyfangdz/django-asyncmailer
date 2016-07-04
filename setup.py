@@ -36,7 +36,17 @@ dev_requires = [
     'flake8',
 ]
 
-install_requires = open('requirements.txt').read().splitlines()
+
+def fetch_dependencies(file_name):
+    deps = []
+    for line in open(file_name).read().splitlines():
+        if line.startswith("-r "):
+            deps.append(fetch_dependencies(line[3:]))
+        else:
+            deps.append(line)
+    return deps
+
+install_requires = fetch_dependencies('requirements.txt')
 
 
 def read(fname):

@@ -5,4 +5,4 @@ ipdb
 mixer
 mock
 tox
-django-compat
+-r vendor_requirements.txt
