@@ -18,10 +18,8 @@ install:
     - pip install coveralls
 
 script:
-    - cd asyncmailer/tests
-    - ../../runtests.py
-    - mv .coverage ../../
-    - cd ../../
+    - ./runtests.py
+    - mv asyncmailer/tests/.coverage .
 
 matrix:
     exclude:
