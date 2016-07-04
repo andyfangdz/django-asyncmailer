@@ -19,7 +19,7 @@ install:
 
 script:
     - cd asyncmailer/tests
-    - ./runtests.py
+    - ../../runtests.py
     - mv .coverage ../../
     - cd ../../
 
