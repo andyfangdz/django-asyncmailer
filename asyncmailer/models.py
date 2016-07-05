@@ -5,6 +5,7 @@ from jsonfield import JSONField
 from django.template import Template, Context
 import html2text
 import re
+from premailer import transform
 
 
 class DeferredMail(models.Model):
@@ -30,13 +31,17 @@ class DeferredMail(models.Model):
 class EmailTemplate(models.Model):
     name = models.SlugField()
     html_content = models.TextField()
-    # text_content = models.TextField()
 
     should_inline = models.BooleanField(default=False)
 
     @property
     def text_content(self):
         return html2text.html2text(self.html_content)
+
+    def get_html_content(self):
+        if self.should_inline:
+            return transform(self.html_content)
+        return self.html_content
 
     def __str__(self):
         return self.name
@@ -45,7 +50,7 @@ class EmailTemplate(models.Model):
         return self.__str__()
 
     def render(self, context):
-        html_template = Template(self.html_content)
+        html_template = Template(self.get_html_content())
         text_template = Template(self.text_content)
         return html_template.render(Context(context)), text_template.render(
             Context(context))
