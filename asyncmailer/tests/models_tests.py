@@ -3,7 +3,7 @@
 
 # from mixer.backend.django import mixer
 from django.test import TestCase
-from asyncmailer.models import Provider
+from asyncmailer.models import Provider, EmailTemplate
 from asyncmailer.tasks import clear_daily_usages, clear_monthly_usages
 
 
@@ -15,7 +15,7 @@ class ProviderTest(TestCase):
         self.test_provider = Provider(
             enabled=True,
             smtp_host="localhost",
-            smtp_port=587,
+            smtp_port=1025,
             smtp_username="",
             smtp_password="",
             use_tls=False,
@@ -94,3 +94,38 @@ class ProviderTest(TestCase):
         clear_monthly_usages()
         self.test_provider = Provider.objects.get(pk=self.test_provider.pk)
         self.assertEqual(self.test_provider.usage, 0)
+
+    def test_template_render(self):
+        """
+        Test if the template renders correctly
+        """
+        original = """\
+<style>
+h1 {
+    font-family: serif;
+}
+</style>
+<h1>Title {{ name }}</h1>
+<p>Content</p>"""
+
+        template = EmailTemplate(
+            name="Test Template",
+            html_content=original,
+            should_inline=True
+        )
+        context = {
+            "name": "Andy"
+        }
+        should_rich = """\
+<html>
+<head></head>
+<body>
+<h1 style="font-family:serif">Title Andy</h1>
+<p>Content</p>
+</body>
+</html>
+"""
+        should_plain = "# Title Andy\n\nContent\n\n"
+        rich, plain = template.render(context=context)
+        self.assertEqual(rich, should_rich)
+        self.assertEqual(plain, should_plain)

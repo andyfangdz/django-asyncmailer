@@ -70,6 +70,8 @@ If you want to contribute to this project, please perform the following steps
     # Clone your fork
     # Install virtualenvwrapper if you haven't:
     # sudo pip install virtualenvwrapper
+    # Edit .bashrc/.zshrc according to:
+    # http://virtualenvwrapper.readthedocs.io/en/latest/install.html#shell-startup-file
     mkvirtualenv -p python2.7 django-asyncmailer
     make develop
 

@@ -1,5 +1,5 @@
 develop: setup-git
-	pip install "file://`pwd`#egg=asyncmailer[dev]"
+	pip install "file://`pwd`#egg=asyncmailer[dev]" --no-binary :all:
 	pip install -e .
 	pip install -r test_requirements.txt
 
