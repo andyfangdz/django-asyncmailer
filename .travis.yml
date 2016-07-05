@@ -11,13 +11,12 @@ env:
     - DJANGO=django==1.9.*
 
 install:
-    - pip install -r test_requirements.txt --use-mirrors
+    - pip install -r test_requirements.txt
     - pip install $DJANGO
     - pip install coveralls
 
 script:
     - ./runtests.py
-    - mv asyncmailer/tests/.coverage .
 
 matrix:
     exclude:
