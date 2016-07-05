@@ -3,6 +3,7 @@ from django.core.mail import get_connection, EmailMultiAlternatives, \
     EmailMessage
 from jsonfield import JSONField
 from django.template import Template, Context
+import html2text
 import re
 
 
@@ -29,7 +30,13 @@ class DeferredMail(models.Model):
 class EmailTemplate(models.Model):
     name = models.SlugField()
     html_content = models.TextField()
-    text_content = models.TextField()
+    # text_content = models.TextField()
+
+    should_inline = models.BooleanField(default=False)
+
+    @property
+    def text_content(self):
+        return html2text.html2text(self.html_content)
 
     def __str__(self):
         return self.name
