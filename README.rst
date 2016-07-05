@@ -67,12 +67,14 @@ If you want to contribute to this project, please perform the following steps
 
     # Fork this repository
     # Clone your fork
+    # Install virtualenvwrapper if you haven't:
+    # sudo pip install virtualenvwrapper
     mkvirtualenv -p python2.7 django-asyncmailer
     make develop
-    
+
     # Make your feature branch
     git co -b feature_branch master
-    
+
     # You can initiate the database and preview the app in the browser
 
     # Django < 1.8:
@@ -83,7 +85,7 @@ If you want to contribute to this project, please perform the following steps
     ./manage.py migrate
 
     ./manage.py runserver
-    
+
     # Implement your feature and tests
     git add . && git commit
     git push -u origin feature_branch
