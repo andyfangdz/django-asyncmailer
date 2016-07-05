@@ -1,6 +1,7 @@
 Django AsyncMailer
 ============
-
+.. image:: https://travis-ci.org/andyfangdz/django-asyncmailer.svg?branch=master
+    :target: https://travis-ci.org/andyfangdz/django-asyncmailer
 Async email solution w/ multiple SMTP credentials, load-balancing and blacklist.
 
 Installation
