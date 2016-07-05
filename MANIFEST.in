@@ -7,6 +7,7 @@ include tox.ini
 include runtests.py
 include requirements.txt
 include test_requirements.txt
+include vendor_requirements.txt
 graft asyncmailer
 global-exclude *.orig *.pyc *.log *.swp local_settings.py
 prune asyncmailer/tests/coverage
