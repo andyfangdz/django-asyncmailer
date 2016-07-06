@@ -1,12 +1,10 @@
 from django.http.response import HttpResponse
-from django.http import HttpResponseForbidden
+from django.contrib.admin.views.decorators import staff_member_required
 
-# asyncmailer/ index page
+
+@staff_member_required
 def index(request):
-    if (request.user.is_authenticated() and request.user.is_active and request.user.is_superuser):
-        return HttpResponse('admin')
-    else:
-        return HttpResponseForbidden()
+    return HttpResponse('')
 
 
 """Views for the asyncmailer app."""
