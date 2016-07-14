@@ -1,0 +1,19 @@
+
+    {
+        "dir":"test/",
+        "html":"test.html",
+        "variation":
+        [
+          "base.json",
+          "something.json"
+        ]
+    },
+    {
+        "dir":"test/",
+        "html":"test.html",
+        "variation":
+        [
+          "base.json",
+          "something.json"
+        ]
+    }
