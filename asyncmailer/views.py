@@ -1,12 +1,13 @@
-from django.http.response import HttpResponse
+from asyncmailer.tasks import async_mail
+from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.http import HttpResponseBadRequest
+from django.http.response import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.conf import settings
-from django.http import HttpResponseBadRequest
-from asyncmailer.tasks import async_mail
-import re
+from django.views.decorators.csrf import ensure_csrf_cookie
 import os
+import re
 
 
 def getOptions():
@@ -30,8 +31,6 @@ def getOptions():
                     pass
             templates.append(newTemplate)
     return templates
-
-from django.views.decorators.csrf import ensure_csrf_cookie
 
 
 @staff_member_required
@@ -110,7 +109,7 @@ def presend(request):
             [email],
             "New Activity on Your Account",
             context_dict={
-                "message": "Hello! \n Someone gave you a comment today! \n \"%s\"" %
+                "message": "Hello!  \n \"%s\"" %
                 getDictValue(
                     payload,
                     'message'),

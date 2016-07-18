@@ -6,17 +6,21 @@
     <link rel="stylesheet" href="{% static 'asyncmailer/css/bootstrap-theme.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'asyncmailer/css/buttons.css' %}"/>
     <link rel="stylesheet" href="{% static 'asyncmailer/css/icheck/skins/flat/green.css' %}"/>
+    <link rel="stylesheet" href="{% static 'asyncmailer/css/Roboto:400,100,300,500.css' %}" />
+    <link rel="stylesheet" href="{% static 'asyncmailer/css/bootstrap-glyphicons.css' %}"/>
+    <link rel="stylesheet" href="{% static 'asyncmailer/css/index.css' %}"/>
+
 
     <script type="text/javascript" src="{% static 'asyncmailer/js/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'asyncmailer/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'asyncmailer/js/jquery.icheck.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'asyncmailer/js/icheck.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'asyncmailer/js/jquery.cookie.js' %}"></script>
-
+    <script type="text/javascript" src="{% static 'asyncmailer/js/index.js' %}"></script>
 
   </head>
     <title>Asyncmailer Manage</title>
-  <body>
+  <body >
 
     <div style="margin:20px;">
       <div class="col-md-3">
@@ -93,7 +97,34 @@
         </form>
 
       </div>
-      <div class="col-md-9" id="preview"></div>
+      <div class="col-md-9">
+
+        <div id="message">
+          <div class="header">
+            <h1 class="page-title"><a class="icon circle-icon glyphicon glyphicon-chevron-left trigger-message-close" href=""></a>Preview<span class="grey"></span></h1>
+            <p>From <a href="#">Lan Zhou La Mian</a> to <a href="#">You</a>, started on <a href="#">July 18, 2016</a> at 20:08 pm est.</p>
+          </div>
+          <div id="message-nano-wrapper" class="nano">
+            <div class="nano-content">
+              <ul class="message-container">
+                <li class="received">
+                  <div class="details">
+                    <div class="left">Lan Zhou La Mian
+                      <div class="arrow orange"></div>You
+                    </div>
+                    <div class="right">July 18, 2016, 20:08 pm</div>
+                  </div>
+                  <div class="message">
+
+                  </div>
+                  <div class="tool-box"><a href="#" class="circle-icon small glyphicon glyphicon-share-alt"></a><a href="#" class="circle-icon small red-hover glyphicon glyphicon-remove"></a><a href="#" class="circle-icon small red-hover glyphicon glyphicon-flag"></a></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <script>
@@ -121,7 +152,8 @@
     {
       $.post("retrieve", $("#render").serialize(),
        function(data){
-         $('#preview').html(data);
+         $('body').addClass('show-message show-main-overlay');
+         $('.message').html(data);
        });
     };
 
