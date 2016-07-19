@@ -3,9 +3,8 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseBadRequest
 from django.http.response import HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.shortcuts import render
+from django.template.loader import render_to_string
 import os
 import re
 
@@ -33,28 +32,6 @@ def getOptions():
     return templates
 
 
-@staff_member_required
-@ensure_csrf_cookie
-def index(request):
-    templates = [i['html'] for i in getOptions()]
-    return render_to_response(
-        'asyncmailer/index.html',
-        {'templates': templates})
-
-
-@staff_member_required
-def getVariations(request):
-    try:
-        template = request.POST.get('template', '')
-        for i in getOptions():
-            if (i['html'] == template):
-                variations = i['variations']
-                break
-        return HttpResponse(' '.join(variations))
-    except:
-        return HttpResponseBadRequest()
-
-
 def getform(request):
     try:
         template = request.POST.get('template', '')
@@ -73,34 +50,65 @@ def getform(request):
 
 
 @staff_member_required
+def index(request):
+    templates = [i['html'] for i in getOptions()]
+    return render(request,
+                  'asyncmailer/index.html',
+                  {'templates': templates})
+
+
+@staff_member_required
+def getVariations(request):
+    try:
+        template = request.POST.get('template', '')
+        for i in getOptions():
+            if (i['html'] == template):
+                variations = i['variations']
+                break
+        return HttpResponse(' '.join(variations))
+    except:
+        return HttpResponseBadRequest()
+
+
+@staff_member_required
 def getJSON(request):
     try:
         template = request.POST.get('template', '')
         variation = request.POST.get('variation', '')
-        return render_to_response(
+        response = {}
+        if (variation != 'base.json'):
+            baseJson = render_to_string(
+                'asyncmailer/' +
+                template.replace(
+                    '.html',
+                    '-templates/base.json'))
+            response.update(eval(str(baseJson)))
+
+        variationJSON = render_to_string(
             'asyncmailer/' +
             template.replace(
                 '.html',
                 '-templates/') +
             variation)
+        response.update(eval(str(variationJSON)))
+        return HttpResponse(str(response))
     except Exception as e:
         print(e)
         return HttpResponseBadRequest()
 
 
-@ensure_csrf_cookie
 @staff_member_required
 def retrieve(request):
     try:
         template, variation, locale, inline, formats, payload = getform(
             request)
-        return render_to_response(
-            'asyncmailer/' +
-            template.replace(
-                '.html',
-                '-templates/') +
-            template,
-            payload)
+        return render(request,
+                      'asyncmailer/' +
+                      template.replace(
+                          '.html',
+                          '-templates/') +
+                      template,
+                      payload)
     except Exception as e:
         print(e)
         return HttpResponseBadRequest()
@@ -114,13 +122,11 @@ def getDictValue(var, key):
 
 
 @staff_member_required
-@ensure_csrf_cookie
 def presend(request):
     try:
         template, variation, locale, inline, formats, payload = getform(
             request)
         email = request.POST.get('email', '')
-        print(email)
         async_mail(
             [email],
             "New Activity on Your Account",
@@ -141,8 +147,8 @@ def presend(request):
                 '.html',
                 '-templates/') +
             template)
-        return render_to_response('asyncmailer/index.html',
-                                  payload)
+        return render(request, 'asyncmailer/index.html',
+                      payload)
     except Exception as e:
         print(e)
         return HttpResponseBadRequest()
