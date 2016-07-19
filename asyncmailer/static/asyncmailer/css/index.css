@@ -65,7 +65,7 @@ width: 75%;
 z-index: 5;
 transform: translateX(200%);
 transition-duration: .5s;
-padding: 50px 30px;
+padding: 0px 30px;
 background: #EFEFEF;
 }
 .show-message #message {

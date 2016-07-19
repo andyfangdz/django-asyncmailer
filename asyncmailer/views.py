@@ -73,6 +73,23 @@ def getform(request):
 
 
 @staff_member_required
+def getJSON(request):
+    try:
+        template = request.POST.get('template', '')
+        variation = request.POST.get('variation', '')
+        return render_to_response(
+            'asyncmailer/' +
+            template.replace(
+                '.html',
+                '-templates/') +
+            variation)
+    except Exception as e:
+        print(e)
+        return HttpResponseBadRequest()
+
+
+@ensure_csrf_cookie
+@staff_member_required
 def retrieve(request):
     try:
         template, variation, locale, inline, formats, payload = getform(
@@ -83,8 +100,7 @@ def retrieve(request):
                 '.html',
                 '-templates/') +
             template,
-            payload,
-            context_instance=RequestContext(request))
+            payload)
     except Exception as e:
         print(e)
         return HttpResponseBadRequest()

@@ -29,8 +29,8 @@
 
 
           <div class="form-group">
-            <label for="template">Template</label>
-            <select class="form-control" id="template" name="template" onchange="setVariation()" onload="setVariation()">
+            <label for="template">Template :</label>
+            <select class="form-control" id="template" name="template" onchange="setVariation()">
               {% for one in templates %}
               <option id="template-option">{{one}}</option>
               {% endfor %}
@@ -40,29 +40,17 @@
           <br/>
 
           <div class="form-group">
-            <label for="variation">Variation</label>
-            <select class="form-control" id="variation" name="variation">
-
-            </select>
+            <label for="variation">Variation :</label>
+            <select class="form-control" id="variation" name="variation" onchange="setPayload()"></select>
           </div>
 
           <br/>
 
           <div class="form-group">
-            <label for="locale">Locale</label>
+            <label for="locale">Locale :</label>
             <select class="form-control" id="locale" name="locale">
               <option>English(US)</option>
             </select>
-          </div>
-
-          <br/>
-
-          <div class="form-group">
-            <label for="inline-style">Inline Styles :</label>
-              <input type="radio" id="inline-style" name="inline" value="Off" checked> OFF
-              &nbsp;&nbsp;
-              <input type="radio" id="inline-style" name="inline" value="On"> ON
-            </label>
           </div>
 
           <br/>
@@ -75,12 +63,11 @@
             </label>
           </div>
 
-          <button type="button" onClick="preview()" class="button button-glow button-rounded button-raised button-primary" style="display: table;margin: 0 auto;">Render</button>
-
+          <br/>
 
           <div class="form-group">
-            <label for="payload">Payload</label>
-              <textarea class="form-control" name="payload" rows="6" placeholder="{'username' : 'newuser', 'token' : '123'}"></textarea>
+            <label for="payload">Payload :</label>
+              <textarea class="form-control" name="payload" id="payload" rows="6" placeholder="{'username' : 'newuser', 'token' : '123'}"></textarea>
             </label>
           </div>
 
@@ -89,10 +76,18 @@
         <form class="form-inline" id="presend">
 
           <div class="form-group">
+            <label for="email">Email :</label>
             <input class="form-control" name="email" id="email" type="email" placeholder="Email">
+            <button type="button" class="button button-glow button-royal button-small" onclick="presend()">Test</button>
           </div>
 
-          <button type="button" class="button button-glow button-rounded button-royal" onclick="presend()">test send</button>
+
+          <br/>
+          <br/>
+
+          <div class="form-group">
+            <button type="button" onClick="preview()" class="button button-glow button-rounded button-raised button-primary button-rounded" style="display: table;margin: 0 auto;">Render</button>
+          </div>
 
         </form>
 
@@ -176,6 +171,25 @@
           $('#variation').append("<option>" + variations[i] + "</option>");
         }
       });
+      setTimeout("setPayload()",500);
+    };
+
+    function setPayload()
+    {
+      if ($("#variation").val() != "")
+      {
+        $.post("getJSON", {template: $("#template").val(), variation: $("#variation").val()},
+        function(data){
+          if (data.length !== 0)
+          {
+            data = eval('(' + data + ')');
+            json = JSON.stringify(data, null, 2);
+            $('#payload').html(json);
+          }
+
+        });
+      }
+
     };
 
 

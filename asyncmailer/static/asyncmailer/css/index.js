@@ -73,9 +73,9 @@ export default StyleSheet.create({
         "zIndex": 5,
         "transform": "translateX(200%)",
         "transitionDuration": ".5s",
-        "paddingTop": 50,
+        "paddingTop": 0,
         "paddingRight": 30,
-        "paddingBottom": 50,
+        "paddingBottom": 0,
         "paddingLeft": 30,
         "background": "#EFEFEF"
     },

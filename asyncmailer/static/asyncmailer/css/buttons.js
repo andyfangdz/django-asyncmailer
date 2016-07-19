@@ -2867,11 +2867,7 @@ export default StyleSheet.create({
     "button-small": {
         "fontSize": 12,
         "height": 30,
-        "lineHeight": 30,
-        "paddingTop": 0,
-        "paddingRight": 30,
-        "paddingBottom": 0,
-        "paddingLeft": 30
+        "lineHeight": 30
     },
     "button-tiny": {
         "fontSize": 9.6,
