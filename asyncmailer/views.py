@@ -53,91 +53,49 @@ def get_form(request):
 @staff_member_required
 def index(request):
     templates = [i['html'] for i in get_options()]
-    return render(request,
-                  'asyncmailer/index.html',
-                  {'templates': templates})
+    return render(request, 'asyncmailer/index.html', {'templates': templates})
 
 
 @staff_member_required
 def get_variations(request):
-    try:
-        template = request.POST.get('template', '')
-        for i in get_options():
-            if (i['html'] == template):
-                variations = i['variations']
-                break
-        return HttpResponse(' '.join(variations))
-    except:
-        return HttpResponseBadRequest()
+    template = request.POST.get('template', '')
+    for i in get_options():
+        if (i['html'] == template):
+            variations = i['variations']
+            break
+    return HttpResponse(' '.join(variations))
 
 
 @staff_member_required
 def get_json(request):
-    try:
-        template = request.POST.get('template', '')
-        variation = request.POST.get('variation', '')
-        response = {}
-        if (variation != 'base.json'):
-            base_json = render_to_string(
-                'asyncmailer/' +
-                template.replace('.html', '-templates/base.json'))
-            response.update(json.loads(str(base_json)))
-        variation_json = render_to_string(
-            'asyncmailer/' +
-            template.replace('.html', '-templates/') + variation)
-        response.update(json.loads(str(variation_json)))
-        return HttpResponse(json.dumps(response))
-    except Exception as e:
-        print(e)
-        return HttpResponseBadRequest()
+    template = request.POST.get('template', '')
+    variation = request.POST.get('variation', '')
+    response = {}
+    if (variation != 'base.json'):
+        base_json = render_to_string(
+            'asyncmailer/' + template.replace('.html', '-templates/base.json'))
+        response.update(json.loads(str(base_json)))
+    variation_json = render_to_string(
+        'asyncmailer/' + template.replace('.html', '-templates/') + variation)
+    response.update(json.loads(str(variation_json)))
+    return HttpResponse(json.dumps(response))
 
 
 @staff_member_required
 def retrieve(request):
-    try:
-        template, variation, locale, inline, formats, payload = get_form(
-            request)
-        return render(request, 'asyncmailer/' +
-                      template.replace('.html', '-templates/') +
-                      template, payload)
-    except Exception as e:
-        print(e)
-        return HttpResponseBadRequest()
-
-
-def get_dict_value(var, key):
-    if (key in var):
-        return var[key]
-    else:
-        return '<NULL>'
+    template, variation, locale, inline, formats, payload = get_form(request)
+    return render(request, 'asyncmailer/' +
+                  template.replace('.html', '-templates/') + template, payload)
 
 
 @staff_member_required
 def presend(request):
-    try:
-        template, variation, locale, inline, formats, payload = get_form(
-            request)
-        email = request.POST.get('email', '')
-        async_mail([email], "New Activity on Your Account",
-                   context_dict={"message": "\"%s\"" %
-                                 get_dict_value(payload, 'message'),
-                                 "button_text":
-                                 get_dict_value(payload, 'button_text'),
-                                 "button_url": "%s" %
-                                 get_dict_value(payload, 'button_url')},
-                   template='asyncmailer/' +
-                            template.replace('.html', '-templates/') +
-                            template)
-        return render(request, 'asyncmailer/index.html', payload)
-    except Exception as e:
-        print(e)
-        return HttpResponseBadRequest()
-
-"""Views for the asyncmailer app."""
-# from django.views.generic import TemplateView
-
-# from . import models
-
-
-# class YourView(TemplateView):
-#    template_name = 'asyncmailer/default.html'
+    template, variation, locale, inline, formats, payload = get_form(request)
+    email = request.POST.get('email', '')
+    async_mail([email], "New Activity on Your Account",
+               context_dict={"message": "\"%s\"" % payload.get('message'),
+                             "button_text": payload.get('button_text'),
+                             "button_url": "%s" % payload.get('button_url')},
+               template='asyncmailer/' +
+                        template.replace('.html', '-templates/') + template)
+    return render(request, 'asyncmailer/index.html', payload)
