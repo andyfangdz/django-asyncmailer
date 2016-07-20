@@ -78,14 +78,14 @@ def get_json(request):
         variation = request.POST.get('variation', '')
         response = {}
         if (variation != 'base.json'):
-            baseJson = render_to_string(
+            base_json = render_to_string(
                 'asyncmailer/' +
                 template.replace('.html', '-templates/base.json'))
-            response.update(json.loads(str(baseJson)))
-        variationJSON = render_to_string(
+            response.update(json.loads(str(base_json)))
+        variation_json = render_to_string(
             'asyncmailer/' +
             template.replace('.html', '-templates/') + variation)
-        response.update(json.loads(str(variationJSON)))
+        response.update(json.loads(str(variation_json)))
         return HttpResponse(json.dumps(response))
     except Exception as e:
         print(e)
