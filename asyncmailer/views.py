@@ -5,11 +5,12 @@ from django.http import HttpResponseBadRequest
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
+import json
 import os
 import re
 
 
-def getOptions():
+def get_options():
     try:
         templatepath = settings.ASYNCMAILER_TEMPLATES_PATH
     except:
@@ -20,19 +21,19 @@ def getOptions():
         if (not os.path.isdir(templatepath + dirname)):
             continue
         else:
-            newTemplate = {"dir": dirname, "html": "", "variations": []}
+            new_template = {"dir": dirname, "html": "", "variations": []}
             for filename in os.listdir(templatepath + dirname):
                 if (re.findall('\.html$', filename)):
-                    newTemplate['html'] = filename
+                    new_template['html'] = filename
                 elif (re.findall('\.json$', filename)):
-                    newTemplate['variations'].append(filename)
+                    new_template['variations'].append(filename)
                 else:
                     pass
-            templates.append(newTemplate)
+            templates.append(new_template)
     return templates
 
 
-def getform(request):
+def get_form(request):
     try:
         template = request.POST.get('template', '')
         variation = request.POST.get('variation', '')
@@ -41,7 +42,7 @@ def getform(request):
         formats = request.POST.get('format', '')
         payload = request.POST.get('payload', '{}')
         if (payload):
-            payload = eval(payload)
+            payload = json.loads(payload)
         else:   # jsons
             payload = {}
         return (template, variation, locale, inline, formats, payload)
@@ -51,17 +52,17 @@ def getform(request):
 
 @staff_member_required
 def index(request):
-    templates = [i['html'] for i in getOptions()]
+    templates = [i['html'] for i in get_options()]
     return render(request,
                   'asyncmailer/index.html',
                   {'templates': templates})
 
 
 @staff_member_required
-def getVariations(request):
+def get_variations(request):
     try:
         template = request.POST.get('template', '')
-        for i in getOptions():
+        for i in get_options():
             if (i['html'] == template):
                 variations = i['variations']
                 break
@@ -71,7 +72,7 @@ def getVariations(request):
 
 
 @staff_member_required
-def getJSON(request):
+def get_json(request):
     try:
         template = request.POST.get('template', '')
         variation = request.POST.get('variation', '')
@@ -79,19 +80,13 @@ def getJSON(request):
         if (variation != 'base.json'):
             baseJson = render_to_string(
                 'asyncmailer/' +
-                template.replace(
-                    '.html',
-                    '-templates/base.json'))
-            response.update(eval(str(baseJson)))
-
+                template.replace('.html', '-templates/base.json'))
+            response.update(json.loads(str(baseJson)))
         variationJSON = render_to_string(
             'asyncmailer/' +
-            template.replace(
-                '.html',
-                '-templates/') +
-            variation)
-        response.update(eval(str(variationJSON)))
-        return HttpResponse(str(response))
+            template.replace('.html', '-templates/') + variation)
+        response.update(json.loads(str(variationJSON)))
+        return HttpResponse(json.dumps(response))
     except Exception as e:
         print(e)
         return HttpResponseBadRequest()
@@ -100,21 +95,17 @@ def getJSON(request):
 @staff_member_required
 def retrieve(request):
     try:
-        template, variation, locale, inline, formats, payload = getform(
+        template, variation, locale, inline, formats, payload = get_form(
             request)
-        return render(request,
-                      'asyncmailer/' +
-                      template.replace(
-                          '.html',
-                          '-templates/') +
-                      template,
-                      payload)
+        return render(request, 'asyncmailer/' +
+                      template.replace('.html', '-templates/') +
+                      template, payload)
     except Exception as e:
         print(e)
         return HttpResponseBadRequest()
 
 
-def getDictValue(var, key):
+def get_dict_value(var, key):
     if (key in var):
         return var[key]
     else:
@@ -124,31 +115,20 @@ def getDictValue(var, key):
 @staff_member_required
 def presend(request):
     try:
-        template, variation, locale, inline, formats, payload = getform(
+        template, variation, locale, inline, formats, payload = get_form(
             request)
         email = request.POST.get('email', '')
-        async_mail(
-            [email],
-            "New Activity on Your Account",
-            context_dict={
-                "message": "Hello!  \n \"%s\"" %
-                getDictValue(
-                    payload,
-                    'message'),
-                "button_text": getDictValue(
-                    payload,
-                    'button_text'),
-                "button_url": "http://?token=%s&next=/notifications/" %
-                getDictValue(
-                    payload,
-                    'button_url')},
-            template='asyncmailer/' +
-            template.replace(
-                '.html',
-                '-templates/') +
-            template)
-        return render(request, 'asyncmailer/index.html',
-                      payload)
+        async_mail([email], "New Activity on Your Account",
+                   context_dict={"message": "\"%s\"" %
+                                 get_dict_value(payload, 'message'),
+                                 "button_text":
+                                 get_dict_value(payload, 'button_text'),
+                                 "button_url": "%s" %
+                                 get_dict_value(payload, 'button_url')},
+                   template='asyncmailer/' +
+                            template.replace('.html', '-templates/') +
+                            template)
+        return render(request, 'asyncmailer/index.html', payload)
     except Exception as e:
         print(e)
         return HttpResponseBadRequest()

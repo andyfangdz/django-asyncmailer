@@ -2,21 +2,18 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" href="{% static 'asyncmailer/css/bootstrap.min.css' %}"/>
-    <link rel="stylesheet" href="{% static 'asyncmailer/css/bootstrap-theme.min.css' %}"/>
-    <link rel="stylesheet" href="{% static 'asyncmailer/css/buttons.css' %}"/>
-    <link rel="stylesheet" href="{% static 'asyncmailer/css/icheck/skins/flat/green.css' %}"/>
-    <link rel="stylesheet" href="{% static 'asyncmailer/css/Roboto:400,100,300,500.css' %}" />
-    <link rel="stylesheet" href="{% static 'asyncmailer/css/bootstrap-glyphicons.css' %}"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/Buttons/2.0.0/css/buttons.css"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/iCheck/1.0.2/skins/flat/green.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,300,500" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" />
     <link rel="stylesheet" href="{% static 'asyncmailer/css/index.css' %}"/>
 
-
-    <script type="text/javascript" src="{% static 'asyncmailer/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'asyncmailer/js/bootstrap.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'asyncmailer/js/jquery.icheck.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'asyncmailer/js/icheck.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'asyncmailer/js/jquery.cookie.js' %}"></script>
-    <script type="text/javascript" src="{% static 'asyncmailer/js/index.js' %}"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
   </head>
     <title>Asyncmailer Manage</title>
@@ -26,7 +23,6 @@
       <div class="col-md-3">
         <form id="render">
           {% csrf_token %}
-
 
           <div class="form-group">
             <label for="template">Template :</label>
@@ -172,7 +168,7 @@
 
     function setVariation()
     {
-      $.post("getVariations", {template: $("#template").val()},
+      $.post("get_variations", {template: $("#template").val()},
       function(data){
         variations = data.split(' ');
         $("#variation").empty();
@@ -188,18 +184,16 @@
     {
       if ($("#variation").val() != "")
       {
-        $.post("getJSON", {template: $("#template").val(), variation: $("#variation").val()},
+        $.post("get_json", {template: $("#template").val(), variation: $("#variation").val()},
         function(data){
           if (data.length !== 0)
           {
-            data = eval('(' + data + ')');
+            data = JSON.parse(data);
             json = JSON.stringify(data, null, 2);
             $('#payload').val(json);
           }
-
         });
       }
-
     };
 
 
