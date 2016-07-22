@@ -173,15 +173,16 @@
             {
               $('#variation').append("<option>" + variations[i] + "</option>");
             }
-            setPayload();
+            setPayload(variations[0]);
           });
      }
 
-    function setPayload()
+    function setPayload(variation)
     {
-      if ($("#variation").val() != "")
+      typeof variation === 'undefined' ? variation = $("#variation").val() : null;
+      if (variation != "")
       {
-        $.post("get_json", {template: $("#template").val(), variation: $("#variation").val()},
+        $.post("get_json", {template: $("#template").val(), variation: variation},
         function(data){
           if (data.length !== 0)
           {
