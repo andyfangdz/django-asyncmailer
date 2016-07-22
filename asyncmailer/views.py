@@ -1,7 +1,6 @@
 from asyncmailer.tasks import async_mail
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponseBadRequest
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
