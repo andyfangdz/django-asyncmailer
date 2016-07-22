@@ -160,25 +160,27 @@
 
     function presend()
     {
-      $.post("presend", $("#render").serialize() + '&' + $("#presend").serialize(),
-       function(data){
-         alert(data);
-       });
+      $.post("presend", $("#render").serialize() + '&' + $("#presend").serialize(), null);
     }
 
     function setVariation()
     {
-      $.post("get_variations", {template: $("#template").val()},
-      function(data){
-        variations = data.split(' ');
-        $("#variation").empty();
-        for (i = 0; i < variations.length; i++)
-        {
-          $('#variation').append("<option>" + variations[i] + "</option>");
-        }
-      });
-      setTimeout("setPayload()",500);
-    };
+      $.ajax({
+        type:"post",
+        url:"get_variations",
+        data:{template: $("#template").val()},
+        async:false,
+        success:function (data){
+            variations = data.split(' ');
+            $("#variation").empty();
+            for (i = 0; i < variations.length; i++)
+            {
+              $('#variation').append("<option>" + variations[i] + "</option>");
+            }
+            setPayload();
+          }
+        });
+    }
 
     function setPayload()
     {
