@@ -165,22 +165,17 @@
 
     function setVariation()
     {
-      $.ajax({
-        type:"post",
-        url:"get_variations",
-        data:{template: $("#template").val()},
-        async:false,
-        success:function (data){
-            variations = data.split(' ');
+      $.post("get_variations", {template: $("#template").val()},
+        function(data){
+          variations = data.split(' ');
             $("#variation").empty();
             for (i = 0; i < variations.length; i++)
             {
               $('#variation').append("<option>" + variations[i] + "</option>");
             }
             setPayload();
-          }
-        });
-    }
+          });
+     }
 
     function setPayload()
     {
@@ -197,7 +192,6 @@
         });
       }
     };
-
 
     </script>
 </body>
