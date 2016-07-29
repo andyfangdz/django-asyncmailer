@@ -1,4 +1,5 @@
 from asyncmailer.tasks import async_mail
+import cgi
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http.response import HttpResponse
@@ -38,7 +39,7 @@ def get_form(request):
         variation = request.POST.get('variation', '')
         locale = request.POST.get('locale', '')
         inline = request.POST.get('inline', '')
-        formats = request.POST.get('format', '')
+        formats = request.POST.get('formats', '')
         payload = request.POST.get('payload', '{}')
         if (payload):
             payload = json.loads(payload)
@@ -83,8 +84,12 @@ def get_json(request):
 @staff_member_required
 def retrieve(request):
     template, variation, locale, inline, formats, payload = get_form(request)
-    return render(request, 'asyncmailer/' +
-                  template.replace('.html', '-templates/') + template, payload)
+    res = render_to_string(
+        'asyncmailer/' +
+        template.replace('.html', '-templates/') + template, payload)
+    if (formats == 'text'):
+        res = cgi.escape(res).encode('utf-8', 'xmlcharrefreplace')
+    return HttpResponse(res)
 
 
 @staff_member_required
