@@ -97,9 +97,7 @@ def presend(request):
     template, variation, locale, inline, formats, payload = get_form(request)
     email = request.POST.get('email', '')
     async_mail([email], "New Activity on Your Account",
-               context_dict={"message": "%s" % payload.get('message'),
-                             "button_text": payload.get('button_text'),
-                             "button_url": "%s" % payload.get('button_url')},
+               context_dict=payload,
                template='asyncmailer/' +
                         template.replace('.html', '-templates/') + template)
     return render(request, 'asyncmailer/index.html', payload)
