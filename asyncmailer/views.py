@@ -18,14 +18,14 @@ def get_options():
     templates = []
 
     for dirname in os.listdir(templatepath):
-        if (not os.path.isdir(templatepath + dirname)):
+        if not os.path.isdir(templatepath + dirname):
             continue
         else:
             new_template = {"dir": dirname, "html": "", "variations": []}
             for filename in os.listdir(templatepath + dirname):
-                if (re.findall('\.html$', filename)):
+                if re.findall('\.html$', filename):
                     new_template['html'] = filename
-                elif (re.findall('\.json$', filename)):
+                elif re.findall('\.json$', filename):
                     new_template['variations'].append(filename)
                 else:
                     pass
@@ -45,7 +45,7 @@ def get_form(request):
             payload = json.loads(payload)
         else:   # jsons
             payload = {}
-        return (template, variation, locale, inline, formats, payload)
+        return template, variation, locale, inline, formats, payload
     except:
         return None
 
@@ -60,7 +60,7 @@ def index(request):
 def get_variations(request):
     template = request.POST.get('template', '')
     for i in get_options():
-        if (i['html'] == template):
+        if i['html'] == template:
             variations = i['variations']
             break
     return HttpResponse(' '.join(variations))
@@ -71,7 +71,7 @@ def get_json(request):
     template = request.POST.get('template', '')
     variation = request.POST.get('variation', '')
     response = {}
-    if (variation != 'base.json'):
+    if variation != 'base.json':
         base_json = render_to_string(
             'asyncmailer/' + template.replace('.html', '-templates/base.json'))
         response.update(json.loads(str(base_json)))
@@ -87,7 +87,7 @@ def retrieve(request):
     res = render_to_string(
         'asyncmailer/' +
         template.replace('.html', '-templates/') + template, payload)
-    if (formats == 'text'):
+    if formats == 'text':
         res = cgi.escape(res).encode('utf-8', 'xmlcharrefreplace')
     return HttpResponse(res)
 
