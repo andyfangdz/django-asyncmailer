@@ -1,0 +1,199 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/Buttons/2.0.0/css/buttons.css"/>
+    <link rel="stylesheet" href="//cdn.bootcss.com/iCheck/1.0.2/skins/flat/green.css"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,300,500" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" />
+    <link rel="stylesheet" href="{% static 'asyncmailer/css/index.css' %}"/>
+
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+  </head>
+    <title>Asyncmailer Manage</title>
+  <body >
+
+    <div style="margin:20px;">
+      <div class="col-md-3">
+        <form id="render">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="template">Template :</label>
+            <select class="form-control" id="template" name="template" onchange="setVariation()">
+              {% for one in templates %}
+              <option id="template-option">{{one}}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <br/>
+
+          <div class="form-group">
+            <label for="variation">Variation :</label>
+            <select class="form-control" id="variation" name="variation" onchange="setPayload()"></select>
+          </div>
+
+          <br/>
+
+          <div class="form-group">
+            <label for="locale">Locale :</label>
+            <select class="form-control" id="locale" name="locale">
+              <option>English(US)</option>
+            </select>
+          </div>
+
+          <br/>
+
+          <div class="form-group">
+            <label for="inline-style">Inline Styles :</label>
+              <input type="radio" id="inline-style" name="inline" value="Off" checked> OFF
+              &nbsp;&nbsp;
+              <input type="radio" id="inline-style" name="inline" value="On"> ON
+            </label>
+          </div>
+
+          <br/>
+
+          <div class="form-group">
+            <label for="formats">Format :</label>
+              <input type="radio" name="formats" value="html" checked> HTML
+              &nbsp;&nbsp;
+              <input type="radio" name="formats" value="text"> TEXT
+            </label>
+          </div>
+
+          <br/>
+
+          <div class="form-group">
+            <label for="payload">Payload :</label>
+              <textarea class="form-control" name="payload" id="payload" rows="6" placeholder="{'username' : 'newuser', 'token' : '123'}"></textarea>
+            </label>
+          </div>
+
+        </form>
+
+        <form class="form-inline" id="presend">
+
+          <div class="form-group">
+            <label for="email">Email :</label>
+            <input class="form-control" name="email" id="email" type="email" placeholder="Email">
+            <button type="button" class="button button-glow button-royal button-small" onclick="presend()">Test</button>
+          </div>
+
+
+          <br/>
+          <br/>
+
+          <div class="form-group">
+            <button type="button" onClick="preview()" class="button button-glow button-rounded button-raised button-primary button-rounded" style="display: table;margin: 0 auto;">Render</button>
+          </div>
+
+        </form>
+
+      </div>
+      <div class="col-md-9">
+
+        <div id="message">
+          <div class="header">
+            <h1 class="page-title"><a class="icon circle-icon glyphicon glyphicon-chevron-left trigger-message-close" href=""></a>Preview<span class="grey"></span></h1>
+            <p>From <a href="#">Lan Zhou La Mian</a> to <a href="#">You</a>, started on <a href="#">July 18, 2016</a> at 20:08 pm est.</p>
+          </div>
+          <div id="message-nano-wrapper" class="nano">
+            <div class="nano-content">
+              <ul class="message-container">
+                <li class="received">
+                  <div class="details">
+                    <div class="left">Lan Zhou La Mian
+                      <div class="arrow orange"></div>You
+                    </div>
+                    <div class="right">July 18, 2016, 20:08 pm</div>
+                  </div>
+                  <div class="message">
+
+                  </div>
+                  <div class="tool-box"><a href="#" class="circle-icon small glyphicon glyphicon-share-alt"></a><a href="#" class="circle-icon small red-hover glyphicon glyphicon-remove"></a><a href="#" class="circle-icon small red-hover glyphicon glyphicon-flag"></a></div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script>
+    $(document).ready(function(){
+      setVariation();
+      $('input').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass: 'iradio_flat-green'
+      });
+    });
+
+    var csrftoken = $.cookie('csrftoken');
+    function csrfSafeMethod(method) {
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+    function preview()
+    {
+      $.post("retrieve", $("#render").serialize(),
+       function(data){
+         $('body').addClass('show-message show-main-overlay');
+         $('.message').html(data);
+       });
+    };
+
+    function presend()
+    {
+      $.post("presend", $("#render").serialize() + '&' + $("#presend").serialize(), null);
+    }
+
+    function setVariation()
+    {
+      $.post("get_variations", {template: $("#template").val()},
+        function(data){
+          variations = data.split(' ');
+            $("#variation").empty();
+            for (i = 0; i < variations.length; i++)
+            {
+              $('#variation').append("<option>" + variations[i] + "</option>");
+            }
+            setPayload(variations[0]);
+          });
+     }
+
+    function setPayload(variation)
+    {
+      typeof variation === 'undefined' ? variation = $("#variation").val() : null;
+      if (variation != "")
+      {
+        $.post("get_json", {template: $("#template").val(), variation: variation},
+        function(data){
+          if (data.length !== 0)
+          {
+            data = JSON.parse(data);
+            json = JSON.stringify(data, null, 2);
+            $('#payload').val(json);
+          }
+        });
+      }
+    };
+
+    </script>
+</body>
+</html>

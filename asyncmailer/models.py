@@ -128,6 +128,6 @@ class Provider(models.Model):
         if not self.within_quota():
             return False
         suffix = re.search("@[\w.]+", address).group()
-        if suffix in self.blacklist:
+        if (self.blacklist and suffix in self.blacklist):
             return False
         return True
