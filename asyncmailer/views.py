@@ -1,4 +1,4 @@
-from asyncmailer.tasks import async_mail
+from asyncmailer.tasks import async_mail, async_select_and_send
 import cgi
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
@@ -34,20 +34,19 @@ def get_options():
 
 
 def get_form(request):
+    template = request.POST.get('template', '')
+    variation = request.POST.get('variation', '')
+    locale = request.POST.get('locale', '')
+    inline = request.POST.get('inline', '')
+    subject = request.POST.get('subject', '')
+    formats = request.POST.get('formats', '')
+    payload = request.POST.get('payload', '{}')
     try:
-        template = request.POST.get('template', '')
-        variation = request.POST.get('variation', '')
-        locale = request.POST.get('locale', '')
-        inline = request.POST.get('inline', '')
-        formats = request.POST.get('formats', '')
-        payload = request.POST.get('payload', '{}')
-        if (payload):
-            payload = json.loads(payload)
-        else:   # jsons
-            payload = {}
-        return template, variation, locale, inline, formats, payload
+        payload = json.loads(payload)
     except:
-        return None
+        if not formats == 'text':
+            payload = {}
+    return template, variation, locale, inline, subject, formats, payload
 
 
 @staff_member_required
@@ -83,21 +82,26 @@ def get_json(request):
 
 @staff_member_required
 def retrieve(request):
-    template, variation, locale, inline, formats, payload = get_form(request)
-    res = render_to_string(
-        'asyncmailer/' +
-        template.replace('.html', '-templates/') + template, payload)
+    template, variation, locale, inline, subject, formats, payload = get_form(
+        request)
     if formats == 'text':
-        res = cgi.escape(res).encode('utf-8', 'xmlcharrefreplace')
+        res = payload
+    else:
+        res = render_to_string(
+            'asyncmailer/' +
+            template.replace('.html', '-templates/') + template, payload)
     return HttpResponse(res)
 
 
 @staff_member_required
 def presend(request):
-    template, variation, locale, inline, formats, payload = get_form(request)
+    template, variation, locale, inline, subject, formats, payload = get_form(
+        request)
     email = request.POST.get('email', '')
-    async_mail([email], "New Activity on Your Account",
-               context_dict=payload,
-               template='asyncmailer/' +
-                        template.replace('.html', '-templates/') + template)
-    return render(request, 'asyncmailer/index.html', payload)
+    if formats == 'text':
+        async_select_and_send(email, subject, payload)
+    else:
+        async_mail([email], subject, context_dict=payload,
+                   template='asyncmailer/' +
+                   template.replace('.html', '-templates/') + template)
+    return HttpResponse('send success')
