@@ -11,25 +11,23 @@ import re
 
 
 def get_options():
-    try:
-        templatepath = settings.ASYNCMAILER_TEMPLATES_PATH
-    except:
-        templatepath = os.path.dirname(__file__) + '/templates/asyncmailer/'
+    template_path = settings.TEMPLATES[0]['DIRS']
+    template_path += [os.path.dirname(__file__) + '/templates/']
     templates = []
-
-    for dirname in os.listdir(templatepath):
-        if not os.path.isdir(templatepath + dirname):
-            continue
-        else:
-            new_template = {"dir": dirname, "html": "", "variations": []}
-            for filename in os.listdir(templatepath + dirname):
-                if re.findall('\.html$', filename):
-                    new_template['html'] = filename
-                elif re.findall('\.json$', filename):
-                    new_template['variations'].append(filename)
-                else:
-                    pass
-            templates.append(new_template)
+    for path in template_path:
+        for dirname in os.listdir(path):
+            if not os.path.isdir(path + dirname):
+                continue
+            else:
+                new_template = {"dir": dirname, "html": "", "variations": []}
+                for filename in os.listdir(path + dirname):
+                    if re.findall('\.html$', filename):
+                        new_template['html'] = filename
+                    elif re.findall('\.json$', filename):
+                        new_template['variations'].append(filename)
+                    else:
+                        pass
+                templates.append(new_template)
     return templates
 
 
@@ -52,7 +50,7 @@ def get_form(request):
 @staff_member_required
 def index(request):
     templates = [i['html'] for i in get_options()]
-    return render(request, 'asyncmailer/index.html', {'templates': templates})
+    return render(request, 'index.html', {'templates': templates})
 
 
 @staff_member_required
@@ -72,10 +70,10 @@ def get_json(request):
     response = {}
     if variation != 'base.json':
         base_json = render_to_string(
-            'asyncmailer/' + template.replace('.html', '-templates/base.json'))
+            template.replace('.html', '-templates/base.json'))
         response.update(json.loads(str(base_json)))
     variation_json = render_to_string(
-        'asyncmailer/' + template.replace('.html', '-templates/') + variation)
+        template.replace('.html', '-templates/') + variation)
     response.update(json.loads(str(variation_json)))
     return HttpResponse(json.dumps(response))
 
@@ -88,7 +86,6 @@ def retrieve(request):
         res = payload
     else:
         res = render_to_string(
-            'asyncmailer/' +
             template.replace('.html', '-templates/') + template, payload)
     return HttpResponse(res)
 
@@ -102,6 +99,6 @@ def presend(request):
         async_select_and_send(email, subject, payload)
     else:
         async_mail([email], subject, context_dict=payload,
-                   template='asyncmailer/' +
-                   template.replace('.html', '-templates/') + template)
+                   template=template.replace('.html', '-templates/')
+                   + template)
     return HttpResponse('send success')

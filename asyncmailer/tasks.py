@@ -24,7 +24,7 @@ def async_select_and_send(email, title, plain_text, rich_text=None, **kwargs):
 
 
 def async_mail(email, title, context_dict=None,
-               template='asyncmailer/email-templates/email.html'):
+               template='email-templates/email.html'):
     if len(email) == 1:
         rich_text = render_to_string(template, context_dict)
         plain_text = html2text.html2text(rich_text)
