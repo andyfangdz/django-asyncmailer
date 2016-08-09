@@ -89,12 +89,17 @@
 
         <form class="form-inline" id="presend">
 
-          <div class="form-group">
-            <label for="email">Email :</label>
+          <div class="form-group" id="test-email">
+            <label for="email" onclick="changeEmailDiv()">Email :</label>
             <input class="form-control" name="email" id="email" type="email" placeholder="Email">
-            <button type="button" class="button button-glow button-royal button-small" onclick="presend()">Test</button>
           </div>
 
+          <div class="form-group" id="upload-email" style="display:none;">
+            <label for="email" onclick="changeEmailDiv()">upload email jsons</label>
+            <input type="file" name="upload-email" id="upload">
+          </div>
+
+          <button type="button" class="button button-glow button-royal button-small" onclick="presend()">Test</button>
 
           <br/>
           <br/>
@@ -168,8 +173,24 @@
 
     function presend()
     {
-      $.post("presend", $("#render").serialize() + '&' + $("#presend").serialize(), null);
-    }
+        var form = new FormData(document.getElementById("render"));
+        upload = $("#upload")[0].files[0];
+        if (typeof upload === 'undefined' || $("#upload-email").is(":hidden"))
+        {
+            form.append("email", $("#email").val());
+        }
+        else
+        {
+            form.append("upload", upload);
+        }
+        $.ajax({
+            url:"presend",
+            type:"post",
+            data:form,
+            processData:false,
+            contentType:false,
+        });
+    };
 
     function setVariation()
     {
@@ -201,6 +222,12 @@
         });
       }
     };
+
+    function changeEmailDiv()
+    {
+      $('#test-email').toggle();
+      $('#upload-email').toggle();
+    }
 
     </script>
 </body>

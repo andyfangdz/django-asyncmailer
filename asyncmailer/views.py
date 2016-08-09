@@ -13,6 +13,7 @@ import re
 def get_options():
     template_path = settings.TEMPLATES[0]['DIRS']
     template_path += [os.path.dirname(__file__) + '/templates/']
+    template_path = list(set(template_path))
     templates = []
     for path in template_path:
         for dirname in os.listdir(path):
@@ -94,11 +95,17 @@ def retrieve(request):
 def presend(request):
     template, variation, locale, inline, subject, formats, payload = get_form(
         request)
-    email = request.POST.get('email', '')
-    if formats == 'text':
-        async_select_and_send(email, subject, payload)
+    emails = request.POST.get('email', None)
+    if emails:
+        emails = [emails]
     else:
-        async_mail([email], subject, context_dict=payload,
-                   template=template.replace('.html', '-templates/')
-                   + template)
+        emails = json.load(request.FILES['upload'])['email']
+    if formats == 'text':
+        for email in emails:
+            async_select_and_send(email, subject, str(payload))
+    else:
+        for email in emails:
+            async_mail([email], subject, context_dict=payload,
+                       template=template.replace('.html', '-templates/')
+                       + template)
     return HttpResponse('send success')
