@@ -104,7 +104,7 @@ def presend(request):
             async_select_and_send(email, subject, str(payload))
     else:
         for email in emails:
-            async_mail([email], subject, context_dict=payload,
-                       template=template.replace('.html', '-templates/')
-                       + template)
+            async_mail(
+                [email], subject, context_dict=payload,
+                template=template.replace('.html', '-templates/') + template)
     return HttpResponse(json.dumps({'success': 'true'}))
