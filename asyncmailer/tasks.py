@@ -9,8 +9,7 @@ import random
 
 
 @shared_task(default_retry_delay=5, max_retries=3)
-def async_select_and_send(email, title, plain_text, rich_text, html_only=False,
-                          **kwargs):
+def async_select_and_send(email, title, plain_text, rich_text=None, **kwargs):
     try:
         providers = Provider.objects.all()
         good_providers = sorted([x for x in providers if x.can_send(email)],
@@ -19,17 +18,13 @@ def async_select_and_send(email, title, plain_text, rich_text, html_only=False,
         top_providers = [provider for provider in good_providers if
                          provider.preference == top_preference]
         selected_provider = random.choice(top_providers)
-        if html_only:
-            selected_provider.send(email, title, rich_text, html_only=True)
-        else:
-            selected_provider.send(email, title, plain_text,
-                                   html_message=rich_text)
+        selected_provider.send(email, title, plain_text, rich_text)
     except Exception as exc:
         raise async_select_and_send.retry(exc=exc)
 
 
 def async_mail(email, title, context_dict=None,
-               template='asyncmailer/email-templates/email.html'):
+               template='email-templates/email.html'):
     if len(email) == 1:
         rich_text = render_to_string(template, context_dict)
         plain_text = html2text.html2text(rich_text)
