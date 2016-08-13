@@ -1,5 +1,4 @@
 from asyncmailer.tasks import async_mail, async_select_and_send
-import cgi
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http.response import HttpResponse
@@ -108,4 +107,4 @@ def presend(request):
             async_mail([email], subject, context_dict=payload,
                        template=template.replace('.html', '-templates/')
                        + template)
-    return HttpResponse('send success')
+    return HttpResponse(json.dumps({'success': 'true'}))
