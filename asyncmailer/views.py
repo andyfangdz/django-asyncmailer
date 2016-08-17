@@ -10,7 +10,15 @@ import re
 
 
 def get_options():
-    template_path = settings.TEMPLATES[0]['DIRS']
+    template_path = []
+    try:
+        template_path += [i for i in settings.TEMPLATE_DIRS]
+    except:
+        pass
+    try:
+        template_path += settings.TEMPLATES[0]['DIRS']
+    except:
+        pass
     template_path += [os.path.dirname(__file__) + '/templates/']
     template_path = list(set(template_path))
     templates = []
