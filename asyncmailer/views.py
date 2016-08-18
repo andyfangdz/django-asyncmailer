@@ -58,7 +58,7 @@ def get_form(request):
 @staff_member_required
 def index(request):
     templates = [i['html'] for i in get_options()]
-    return render(request, 'index.html', {'templates': templates})
+    return render(request, 'asyncmailer/index.html', {'templates': templates})
 
 
 @staff_member_required
