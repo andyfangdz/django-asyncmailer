@@ -24,7 +24,7 @@ def get_options():
     templates = []
     for path in template_path:
         for dirname in os.listdir(path):
-            if not os.path.isdir(path + dirname):
+            if not os.path.isdir(path + dirname) or dirname == 'asyncmailer':
                 continue
             else:
                 new_template = {"dir": dirname, "html": "", "variations": []}
