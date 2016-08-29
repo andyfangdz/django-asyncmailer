@@ -83,10 +83,13 @@ def get_metadata(request):
 @staff_member_required
 def retrieve(request):
     try:
-        template, variation, locale, inline, subject, formats, payload = get_request_content(
-            request)
+        template, variation, locale, inline, subject, formats, payload = \
+            get_request_content(request)
     except:
-        return HttpResponse(json.dumps({'success': False, 'error': "Invalid JSON in payload."}))
+        return HttpResponse(json.dumps({
+            'success': False,
+            'error': "Invalid JSON in payload."
+        }))
 
     try:
         if formats == 'text':
@@ -95,18 +98,23 @@ def retrieve(request):
             res = render_to_string(
                 template.replace('.html', '-templates/') + template, payload)
     except:
-        return HttpResponse(json.dumps({'success': False, 'error': "Template render error."}))
+        return HttpResponse(json.dumps({
+            'success': False,
+            'error': "Template render error."
+        }))
     return HttpResponse(json.dumps({'success': True, 'content': res}))
 
 
 @staff_member_required
 def presend(request):
     try:
-        template, variation, locale, inline, subject, formats, payload = get_request_content(
-            request
-        )
+        template, variation, locale, inline, subject, formats, payload = \
+            get_request_content(request)
     except ValueError:
-        return HttpResponse(json.dumps({'success': False, 'error': "Invalid JSON in payload."}))
+        return HttpResponse(json.dumps({
+            'success': False,
+            'error': "Invalid JSON in payload."
+        }))
     emails = request.POST.get('email', None)
     try:
         if emails:
@@ -114,7 +122,10 @@ def presend(request):
         else:
             emails = json.load(request.FILES['upload'])['email']
     except:
-        return HttpResponse(json.dumps({'success': False, 'error': "Invalid email address."}))
+        return HttpResponse(json.dumps({
+            'success': False,
+            'error': "Invalid email address."
+        }))
 
     try:
         if formats == 'text':
@@ -126,5 +137,8 @@ def presend(request):
                     [email], subject, context_dict=payload,
                     template=template.replace('.html', '-templates/') + template)
     except:
-        return HttpResponse(json.dumps({'success': False, 'error': "Cannot send email. Check Provider settings."}))
+        return HttpResponse(json.dumps({
+            'success': False,
+            'error': "Cannot send email. Check Provider settings."
+        }))
     return HttpResponse(json.dumps({'success': True}))
