@@ -11,14 +11,12 @@ import re
 
 def get_options():
     template_path = []
-    try:
-        template_path += [i for i in settings.TEMPLATE_DIRS]
-    except:
-        pass
-    try:
+
+    if hasattr(settings, "TEMPLATE_DIR"):
+        template_path += settings.TEMPLATE_DIRS
+
+    if hasattr(settings, "TEMPLATES") and settings.TEMPLATES:
         template_path += settings.TEMPLATES[0]['DIRS']
-    except:
-        pass
     template_path += [os.path.dirname(__file__) + '/templates/']
     template_path = list(set(template_path))
     templates = []
@@ -39,7 +37,7 @@ def get_options():
     return templates
 
 
-def get_form(request):
+def get_request_content(request):
     template = request.POST.get('template', '')
     variation = request.POST.get('variation', '')
     locale = request.POST.get('locale', '')
@@ -47,11 +45,7 @@ def get_form(request):
     subject = request.POST.get('subject', '')
     formats = request.POST.get('formats', '')
     payload = request.POST.get('payload', '{}')
-    try:
-        payload = json.loads(payload)
-    except:
-        if not formats == 'text':
-            payload = {}
+    payload = json.loads(payload)
     return template, variation, locale, inline, subject, formats, payload
 
 
@@ -72,7 +66,7 @@ def get_variations(request):
 
 
 @staff_member_required
-def get_json(request):
+def get_metadata(request):
     template = request.POST.get('template', '')
     variation = request.POST.get('variation', '')
     response = {}
@@ -88,31 +82,49 @@ def get_json(request):
 
 @staff_member_required
 def retrieve(request):
-    template, variation, locale, inline, subject, formats, payload = get_form(
-        request)
-    if formats == 'text':
-        res = payload
-    else:
-        res = render_to_string(
-            template.replace('.html', '-templates/') + template, payload)
-    return HttpResponse(res)
+    try:
+        template, variation, locale, inline, subject, formats, payload = get_request_content(
+            request)
+    except:
+        return HttpResponse(json.dumps({'success': False, 'error': "Invalid JSON in payload."}))
+
+    try:
+        if formats == 'text':
+            res = payload
+        else:
+            res = render_to_string(
+                template.replace('.html', '-templates/') + template, payload)
+    except:
+        return HttpResponse(json.dumps({'success': False, 'error': "Template render error."}))
+    return HttpResponse(json.dumps({'success': True, 'content': res}))
 
 
 @staff_member_required
 def presend(request):
-    template, variation, locale, inline, subject, formats, payload = get_form(
-        request)
+    try:
+        template, variation, locale, inline, subject, formats, payload = get_request_content(
+            request
+        )
+    except ValueError:
+        return HttpResponse(json.dumps({'success': False, 'error': "Invalid JSON in payload."}))
     emails = request.POST.get('email', None)
-    if emails:
-        emails = [emails]
-    else:
-        emails = json.load(request.FILES['upload'])['email']
-    if formats == 'text':
-        for email in emails:
-            async_select_and_send(email, subject, str(payload))
-    else:
-        for email in emails:
-            async_mail(
-                [email], subject, context_dict=payload,
-                template=template.replace('.html', '-templates/') + template)
-    return HttpResponse(json.dumps({'success': 'true'}))
+    try:
+        if emails:
+            emails = [emails]
+        else:
+            emails = json.load(request.FILES['upload'])['email']
+    except:
+        return HttpResponse(json.dumps({'success': False, 'error': "Invalid email address."}))
+
+    try:
+        if formats == 'text':
+            for email in emails:
+                async_select_and_send(email, subject, str(payload))
+        else:
+            for email in emails:
+                async_mail(
+                    [email], subject, context_dict=payload,
+                    template=template.replace('.html', '-templates/') + template)
+    except:
+        return HttpResponse(json.dumps({'success': False, 'error': "Cannot send email. Check Provider settings."}))
+    return HttpResponse(json.dumps({'success': True}))

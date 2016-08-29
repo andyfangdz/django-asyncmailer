@@ -1,234 +1,259 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="//cdn.bootcss.com/Buttons/2.0.0/css/buttons.css"/>
     <link rel="stylesheet" href="//cdn.bootcss.com/iCheck/1.0.2/skins/flat/green.css"/>
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,300,500" />
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" />
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,300,500"/>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/g/sweetalert2@4.1.9(sweetalert2.min.css),sweetalert2@4.2.4(sweetalert2.min.css)">
+
     <link rel="stylesheet" href="{% static 'asyncmailer/css/index.css' %}"/>
 
     <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
     <script type="text/javascript" src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/g/sweetalert2@4.1.9,sweetalert2@4.2.4"></script>
+</head>
+<title>Asyncmailer Manage</title>
+<body>
 
-  </head>
-    <title>Asyncmailer Manage</title>
-  <body >
-
-    <div style="margin:20px;">
-      <div class="col-md-3">
+<div>
+    <div class="col-md-4 left-control">
         <form id="render">
-          {% csrf_token %}
+            {% csrf_token %}
 
-          <div class="form-group">
-            <label for="template">Template :</label>
-            <select class="form-control" id="template" name="template" onchange="setVariation()">
-              {% for one in templates %}
-              <option id="template-option">{{one}}</option>
-              {% endfor %}
-            </select>
-          </div>
+            <div class="form-group">
+                <label for="template">Template</label>
+                <select class="form-control" id="template" name="template" onchange="setVariation()">
+                    {% for one in templates %}
+                        <option id="template-option">{{ one }}</option>
+                    {% endfor %}
+                </select>
+            </div>
 
-          <br/>
+            <div class="form-group">
+                <label for="variation">Variation</label>
+                <select class="form-control" id="variation" name="variation" onchange="setPayload()"></select>
+            </div>
 
-          <div class="form-group">
-            <label for="variation">Variation :</label>
-            <select class="form-control" id="variation" name="variation" onchange="setPayload()"></select>
-          </div>
+            <div class="form-group">
+                <label for="locale">Locale</label>
+                <select class="form-control" id="locale" name="locale">
+                    <option>English(US)</option>
+                </select>
+            </div>
 
-          <br/>
+            <div class="form-group" data-toggle="tooltip"
+                 title="Inlining styles apply CSS rules in &lt;style&gt; tags to each individual DOM element. Recommended for compatibility with email clients.">
+                <label for="inline-style">Inline Styles</label>
+                <div class="right-options">
+                    <input type="radio" id="inline-style" name="inline" value="Off" checked> OFF
+                    <input type="radio" id="inline-style" name="inline" value="On"> ON
+                </div>
+            </div>
 
-          <div class="form-group">
-            <label for="locale">Locale :</label>
-            <select class="form-control" id="locale" name="locale">
-              <option>English(US)</option>
-            </select>
-          </div>
+            <div class="form-group">
+                <label for="subject">Subject</label>
+                <input class="form-control" name="subject" id="subject" type="subject" placeholder="New Message">
+                </label>
+            </div>
 
-          <br/>
+            <div class="form-group" data-toggle="tooltip"
+                 title="Use HTML to send both rich-text and plain-text emails. Use TEXT if only plain-text is needed.">
+                <label for="formats">Format</label>
+                <div class="right-options">
+                    <input type="radio" name="formats" value="html" checked> HTML
+                    <input type="radio" name="formats" value="text"> TEXT
+                </div>
+            </div>
 
-          <div class="form-group">
-            <label for="inline-style">Inline Styles :</label>
-              <input type="radio" id="inline-style" name="inline" value="Off" checked> OFF
-              &nbsp;&nbsp;
-              <input type="radio" id="inline-style" name="inline" value="On"> ON
-            </label>
-          </div>
-
-          <br/>
-
-          <div class="form-group">
-            <label for="subject">Subject :</label>
-              <input class="form-control" name="subject" id="subject" type="subject" placeholder="New Message">
-            </label>
-          </div>
-
-          <br/>
-
-          <div class="form-group">
-            <label for="formats">Format :</label>
-              <input type="radio" name="formats" value="html" checked> HTML
-              &nbsp;&nbsp;
-              <input type="radio" name="formats" value="text"> TEXT
-            </label>
-          </div>
-
-          <br/>
-
-          <div class="form-group">
-            <label for="payload">Payload :</label>
-              <textarea class="form-control" name="payload" id="payload" rows="6" placeholder="{'username' : 'newuser', 'token' : '123'}"></textarea>
-            </label>
-          </div>
+            <div class="form-group">
+                <label for="payload">Payload</label>
+                <textarea class="form-control" name="payload" id="payload" rows="6"
+                          placeholder="{'username' : 'newuser', 'token' : '123'}"></textarea>
+                </label>
+            </div>
 
         </form>
+        <div class="form-group render-button">
+            <button type="button" onClick="preview()"
+                    class="button button-glow button-small">Render
+            </button>
+        </div>
 
         <form class="form-inline" id="presend">
 
-          <div class="form-group" id="test-email">
-            <label for="email" onclick="changeEmailDiv()">Email :</label>
-            <input class="form-control" name="email" id="email" type="email" placeholder="Email">
-          </div>
+            <div class="form-group" id="test-email">
+                <label for="email" onclick="changeEmailDiv()">Email</label>
+                <input class="form-control" name="email" id="email" type="email" placeholder="Email">
+            </div>
 
-          <div class="form-group" id="upload-email" style="display:none;">
-            <label for="email" onclick="changeEmailDiv()">upload email jsons</label>
-            <input type="file" name="upload-email" id="upload">
-          </div>
+            <div class="form-group" id="upload-email" style="display:none;">
+                <label for="email" onclick="changeEmailDiv()">upload email jsons</label>
+                <input type="file" name="upload-email" id="upload">
+            </div>
 
-          <button type="button" class="button button-glow button-royal button-small" onclick="presend()">Test</button>
-
-          <br/>
-          <br/>
-
-          <div class="form-group">
-            <button type="button" onClick="preview()" class="button button-glow button-rounded button-raised button-primary button-rounded" style="display: table;margin: 0 auto;">Render</button>
-          </div>
-
+            <button type="button" class="button button-glow button-royal button-small" onclick="presend()">Test</button>
         </form>
 
-      </div>
-      <div class="col-md-9">
+    </div>
+    <div class="col-md-8">
 
         <div id="message">
-          <div class="header">
-            <h1 class="page-title"><a class="icon circle-icon glyphicon glyphicon-chevron-left trigger-message-close" href=""></a>Preview<span class="grey"></span></h1>
-            <p>From <a href="#">Lan Zhou La Mian</a> to <a href="#">You</a>, started on <a href="#">July 18, 2016</a> at 20:08 pm est.</p>
-          </div>
-          <div id="message-nano-wrapper" class="nano">
-            <div class="nano-content">
-              <ul class="message-container">
-                <li class="received">
-                  <div class="details">
-                    <div class="left">Lan Zhou La Mian
-                      <div class="arrow orange"></div>You
-                    </div>
-                    <div class="right">July 18, 2016, 20:08 pm</div>
-                  </div>
-                  <div class="message">
-
-                  </div>
-                  <div class="tool-box"><a href="#" class="circle-icon small glyphicon glyphicon-share-alt"></a><a href="#" class="circle-icon small red-hover glyphicon glyphicon-remove"></a><a href="#" class="circle-icon small red-hover glyphicon glyphicon-flag"></a></div>
-                </li>
-              </ul>
+            <div class="header">
+                <h1 class="page-title">Preview<span class="grey"></span></h1>
             </div>
-          </div>
+            <div id="message-nano-wrapper" class="nano">
+                <div class="nano-content">
+                    <ul class="message-container">
+                        <li class="received">
+                            <div class="details">
+                                <div class="meta-inf">
+                                    Lanzhong &lt;no-reply@lanzhong.com&gt; <br/>
+                                </div>
+                                <div class="subject">
+                                    Welcome to Lanzhong Inc.
+                                </div>
+                            </div>
+                            <iframe id="message-frame" name="message-frame" src=""></iframe>
+                            <div class="tool-box"><a href="#"
+                                                     class="circle-icon small glyphicon glyphicon-share-alt"></a><a
+                                    href="#" class="circle-icon small red-hover glyphicon glyphicon-remove"></a><a
+                                    href="#" class="circle-icon small red-hover glyphicon glyphicon-flag"></a></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
-      </div>
     </div>
+</div>
+<script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+<script type="text/javascript" src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+<script type="text/javascript" src="//cdn.jsdelivr.net/g/sweetalert2@4.1.9,sweetalert2@4.2.4"></script>
+<script>
+    $(document).ready(function () {
 
-    <script>
-    $(document).ready(function(){
-      setVariation();
-      $('input').iCheck({
-        checkboxClass: 'icheckbox_flat-green',
-        radioClass: 'iradio_flat-green'
-      });
     });
 
     var csrftoken = $.cookie('csrftoken');
     function csrfSafeMethod(method) {
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
     $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
         }
-      }
     });
 
-    function preview()
-    {
-      $.post("retrieve", $("#render").serialize(),
-       function(data){
-         $('body').addClass('show-message show-main-overlay');
-         $('.message').html(data);
-       });
-    };
+    function preview() {
+        NProgress.start();
+        $.post("retrieve", $("#render").serialize(),
+                function (data) {
+                    data = JSON.parse(data);
+                    if (data.success) {
+                        $('body').addClass('show-message show-main-overlay');
+                        var messageFrame = document.getElementById('message-frame').contentWindow.document;
+                        messageFrame.open();
+                        messageFrame.write(data.content);
+                        messageFrame.close();
+                    } else {
+                        console.log(data);
+                        swal("Something went wrong...", data.error, "error");
+                    }
+                    NProgress.done();
+                });
+    }
 
-    function presend()
-    {
+    function presend() {
         var form = new FormData(document.getElementById("render"));
         upload = $("#upload")[0].files[0];
-        if (typeof upload === 'undefined' || $("#upload-email").is(":hidden"))
-        {
+        if (typeof upload === 'undefined' || $("#upload-email").is(":hidden")) {
             form.append("email", $("#email").val());
         }
-        else
-        {
+        else {
             form.append("upload", upload);
         }
         $.ajax({
-            url:"presend",
-            type:"post",
-            data:form,
-            processData:false,
-            contentType:false,
-        });
-    };
-
-    function setVariation()
-    {
-      $.post("get_variations", {template: $("#template").val()},
-        function(data){
-          variations = data.split(' ');
-            $("#variation").empty();
-            for (i = 0; i < variations.length; i++)
-            {
-              $('#variation').append("<option>" + variations[i] + "</option>");
+            url: "presend",
+            type: "post",
+            data: form,
+            processData: false,
+            contentType: false,
+            dataType: "json"
+        }).done(function (data) {
+            if (!data.success) {
+                swal("Something went wrong...", data.error, "error");
             }
-            setPayload(variations[0]);
-          });
-     }
-
-    function setPayload(variation)
-    {
-      typeof variation === 'undefined' ? variation = $("#variation").val() : null;
-      if (variation != "")
-      {
-        $.post("get_json", {template: $("#template").val(), variation: variation},
-        function(data){
-          if (data.length !== 0)
-          {
-            data = JSON.parse(data);
-            json = JSON.stringify(data, null, 2);
-            $('#payload').val(json);
-          }
         });
-      }
-    };
-
-    function changeEmailDiv()
-    {
-      $('#test-email').toggle();
-      $('#upload-email').toggle();
     }
 
-    </script>
+    function setVariation() {
+        $.post("get_variations", {template: $("#template").val()},
+                function (data) {
+                    variations = data.split(' ');
+                    $("#variation").empty();
+                    for (i = 0; i < variations.length; i++) {
+                        $('#variation').append("<option>" + variations[i] + "</option>");
+                    }
+                    setPayload(variations[0]);
+                });
+    }
+
+    function setPayload(variation) {
+        variation = typeof variation === 'undefined' ? $("#variation").val() : variation;
+        if (variation != "") {
+            $.post("get_json", {template: $("#template").val(), variation: variation},
+                    function (data) {
+                        if (data.length !== 0) {
+                            data = JSON.parse(data);
+                            json = JSON.stringify(data, null, 2);
+                            $('#payload').val(json);
+                            preview();
+                        }
+                    });
+        }
+
+    }
+
+    function changeEmailDiv() {
+        $('#test-email').toggle();
+        $('#upload-email').toggle();
+    }
+
+    function isJsonString(str) {
+        try {
+            JSON.parse(str);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+        $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+            swal(jqxhr.status.toString(), jqxhr.statusText, "error");
+        });
+        setVariation();
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_flat-green'
+        });
+    })
+
+</script>
 </body>
 </html>
