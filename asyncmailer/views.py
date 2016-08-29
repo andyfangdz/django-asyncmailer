@@ -135,7 +135,8 @@ def presend(request):
             for email in emails:
                 async_mail(
                     [email], subject, context_dict=payload,
-                    template=template.replace('.html', '-templates/') + template)
+                    template=template.replace('.html',
+                                              '-templates/') + template)
     except:
         return HttpResponse(json.dumps({
             'success': False,
