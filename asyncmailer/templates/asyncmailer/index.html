@@ -33,7 +33,7 @@
                 <label for="template">Template</label>
                 <select class="form-control" id="template" name="template" onchange="setVariation()">
                     {% for one in templates %}
-                        <option id="template-option">{{ one }}</option>
+                        <option id="template-option" value="{{ one }}">{{ one }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -54,15 +54,9 @@
                  title="Inlining styles apply CSS rules in &lt;style&gt; tags to each individual DOM element. Recommended for compatibility with email clients.">
                 <label for="inline-style">Inline Styles</label>
                 <div class="right-options">
-                    <input type="radio" id="inline-style" name="inline" value="Off" checked> OFF
-                    <input type="radio" id="inline-style" name="inline" value="On"> ON
+                    <input type="radio" id="inline-style" name="inline" value="Off"> OFF
+                    <input type="radio" id="inline-style" name="inline" value="On" checked> ON
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label for="subject">Subject</label>
-                <input class="form-control" name="subject" id="subject" type="subject" placeholder="New Message">
-                </label>
             </div>
 
             <div class="form-group" data-toggle="tooltip"
@@ -100,7 +94,7 @@
                 <input type="file" name="upload-email" id="upload">
             </div>
 
-            <button type="button" class="button button-glow button-royal button-small" onclick="presend()">Test</button>
+            <button type="button" class="button button-glow button-royal button-small" onclick="sendTestMail()">Test</button>
         </form>
 
     </div>
@@ -142,10 +136,6 @@
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/g/sweetalert2@4.1.9,sweetalert2@4.2.4"></script>
 <script>
-    $(document).ready(function () {
-
-    });
-
     var csrftoken = $.cookie('csrftoken');
     function csrfSafeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -160,15 +150,18 @@
 
     function preview() {
         NProgress.start();
-        $.post("retrieve", $("#render").serialize(),
+        $.post("render_email", $("#render").serialize(),
                 function (data) {
-                    data = JSON.parse(data);
                     if (data.success) {
                         $('body').addClass('show-message show-main-overlay');
                         var messageFrame = document.getElementById('message-frame').contentWindow.document;
+                        if (data.plainText) {
+                            data.content = '<pre>' + data.content + '</pre>'
+                        }
                         messageFrame.open();
                         messageFrame.write(data.content);
                         messageFrame.close();
+                        $('.subject').text(data.subject)
                     } else {
                         console.log(data);
                         swal("Something went wrong...", data.error, "error");
@@ -177,7 +170,7 @@
                 });
     }
 
-    function presend() {
+    function sendTestMail() {
         var form = new FormData(document.getElementById("render"));
         upload = $("#upload")[0].files[0];
         if (typeof upload === 'undefined' || $("#upload-email").is(":hidden")) {
@@ -187,7 +180,7 @@
             form.append("upload", upload);
         }
         $.ajax({
-            url: "presend",
+            url: "send_test_mail",
             type: "post",
             data: form,
             processData: false,
@@ -196,6 +189,8 @@
         }).done(function (data) {
             if (!data.success) {
                 swal("Something went wrong...", data.error, "error");
+            } else {
+                swal("Email sent", "", "success");
             }
         });
     }
@@ -203,7 +198,7 @@
     function setVariation() {
         $.post("get_variations", {template: $("#template").val()},
                 function (data) {
-                    variations = data.split(' ');
+                    variations = data.variations;
                     $("#variation").empty();
                     for (i = 0; i < variations.length; i++) {
                         $('#variation').append("<option>" + variations[i] + "</option>");
@@ -215,10 +210,9 @@
     function setPayload(variation) {
         variation = typeof variation === 'undefined' ? $("#variation").val() : variation;
         if (variation != "") {
-            $.post("get_json", {template: $("#template").val(), variation: variation},
+            $.post("get_metadata", {template: $("#template").val(), variation: variation},
                     function (data) {
                         if (data.length !== 0) {
-                            data = JSON.parse(data);
                             json = JSON.stringify(data, null, 2);
                             $('#payload').val(json);
                             preview();
