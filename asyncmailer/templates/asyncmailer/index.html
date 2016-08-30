@@ -2,24 +2,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
-    <link rel="stylesheet" href="//cdn.bootcss.com/Buttons/2.0.0/css/buttons.css"/>
-    <link rel="stylesheet" href="//cdn.bootcss.com/iCheck/1.0.2/skins/flat/green.css"/>
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,100,300,500"/>
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+    <link rel="stylesheet"
+          href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <link rel="stylesheet"
+          href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet"
+          href="//cdn.bootcss.com/Buttons/2.0.0/css/buttons.css"/>
+    <link rel="stylesheet"
+          href="//cdn.bootcss.com/iCheck/1.0.2/skins/flat/green.css"/>
+    <link rel="stylesheet"
+          href="//fonts.googleapis.com/css?family=Roboto:400,100,300,500"/>
+    <link rel="stylesheet"
+          href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet"
+          href="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/g/sweetalert2@4.1.9(sweetalert2.min.css),sweetalert2@4.2.4(sweetalert2.min.css)">
 
     <link rel="stylesheet" href="{% static 'asyncmailer/css/index.css' %}"/>
 
-    <script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
-    <script type="text/javascript" src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
-    <script type="text/javascript" src="//cdn.jsdelivr.net/g/sweetalert2@4.1.9,sweetalert2@4.2.4"></script>
+    <script type="text/javascript"
+            src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script type="text/javascript"
+            src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type="text/javascript"
+            src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+    <script type="text/javascript"
+            src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <script type="text/javascript"
+            src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+    <script type="text/javascript"
+            src="//cdn.jsdelivr.net/g/sweetalert2@4.1.9,sweetalert2@4.2.4"></script>
 </head>
 <title>Asyncmailer Manage</title>
 <body>
@@ -31,16 +44,19 @@
 
             <div class="form-group">
                 <label for="template">Template</label>
-                <select class="form-control" id="template" name="template" onchange="setVariation()">
+                <select class="form-control" id="template" name="template"
+                        onchange="setVariation()">
                     {% for one in templates %}
-                        <option id="template-option" value="{{ one }}">{{ one }}</option>
+                        <option id="template-option"
+                                value="{{ one }}">{{ one }}</option>
                     {% endfor %}
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="variation">Variation</label>
-                <select class="form-control" id="variation" name="variation" onchange="setPayload()"></select>
+                <select class="form-control" id="variation" name="variation"
+                        onchange="setPayload()"></select>
             </div>
 
             <div class="form-group">
@@ -54,8 +70,10 @@
                  title="Inlining styles apply CSS rules in &lt;style&gt; tags to each individual DOM element. Recommended for compatibility with email clients.">
                 <label for="inline-style">Inline Styles</label>
                 <div class="right-options">
-                    <input type="radio" id="inline-style" name="inline" value="Off"> OFF
-                    <input type="radio" id="inline-style" name="inline" value="On" checked> ON
+                    <input type="radio" id="inline-style" class="should-render"
+                           name="inline" value="Off"> OFF
+                    <input type="radio" id="inline-style" class="should-render"
+                           name="inline" value="On" checked> ON
                 </div>
             </div>
 
@@ -63,14 +81,17 @@
                  title="Use HTML to send both rich-text and plain-text emails. Use TEXT if only plain-text is needed.">
                 <label for="formats">Format</label>
                 <div class="right-options">
-                    <input type="radio" name="formats" value="html" checked> HTML
-                    <input type="radio" name="formats" value="text"> TEXT
+                    <input type="radio" class="should-render" name="formats"
+                           value="html" checked> HTML
+                    <input type="radio" class="should-render" name="formats"
+                           value="text"> TEXT
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="payload">Payload</label>
-                <textarea class="form-control" name="payload" id="payload" rows="6"
+                <textarea class="form-control" name="payload" id="payload"
+                          rows="6"
                           placeholder="{'username' : 'newuser', 'token' : '123'}"></textarea>
                 </label>
             </div>
@@ -86,15 +107,20 @@
 
             <div class="form-group" id="test-email">
                 <label for="email" onclick="changeEmailDiv()">Email</label>
-                <input class="form-control" name="email" id="email" type="email" placeholder="Email">
+                <input class="form-control" name="email" id="email"
+                       type="email" placeholder="Email">
             </div>
 
             <div class="form-group" id="upload-email" style="display:none;">
-                <label for="email" onclick="changeEmailDiv()">upload email jsons</label>
+                <label for="email" onclick="changeEmailDiv()">upload email
+                    jsons</label>
                 <input type="file" name="upload-email" id="upload">
             </div>
 
-            <button type="button" class="button button-glow button-royal button-small" onclick="sendTestMail()">Test</button>
+            <button type="button"
+                    class="button button-glow button-royal button-small"
+                    onclick="sendTestMail()">Test
+            </button>
         </form>
 
     </div>
@@ -110,17 +136,22 @@
                         <li class="received">
                             <div class="details">
                                 <div class="meta-inf">
-                                    Lanzhong &lt;no-reply@lanzhong.com&gt; <br/>
+                                    Lanzhong &lt;no-reply@lanzhong.com&gt;
+                                    <br/>
                                 </div>
                                 <div class="subject">
                                     Welcome to Lanzhong Inc.
                                 </div>
                             </div>
-                            <iframe id="message-frame" name="message-frame" src=""></iframe>
+                            <iframe id="message-frame" name="message-frame"
+                                    src=""></iframe>
                             <div class="tool-box"><a href="#"
                                                      class="circle-icon small glyphicon glyphicon-share-alt"></a><a
-                                    href="#" class="circle-icon small red-hover glyphicon glyphicon-remove"></a><a
-                                    href="#" class="circle-icon small red-hover glyphicon glyphicon-flag"></a></div>
+                                    href="#"
+                                    class="circle-icon small red-hover glyphicon glyphicon-remove"></a><a
+                                    href="#"
+                                    class="circle-icon small red-hover glyphicon glyphicon-flag"></a>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -129,12 +160,18 @@
 
     </div>
 </div>
-<script type="text/javascript" src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-<script type="text/javascript" src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
-<script type="text/javascript" src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
-<script type="text/javascript" src="//cdn.jsdelivr.net/g/sweetalert2@4.1.9,sweetalert2@4.2.4"></script>
+<script type="text/javascript"
+        src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script type="text/javascript"
+        src="//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+        src="//cdn.bootcss.com/iCheck/1.0.2/icheck.min.js"></script>
+<script type="text/javascript"
+        src="//cdn.bootcss.com/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script type="text/javascript"
+        src="//cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+<script type="text/javascript"
+        src="//cdn.jsdelivr.net/g/sweetalert2@4.1.9,sweetalert2@4.2.4"></script>
 <script>
     var csrftoken = $.cookie('csrftoken');
     function csrfSafeMethod(method) {
@@ -210,7 +247,10 @@
     function setPayload(variation) {
         variation = typeof variation === 'undefined' ? $("#variation").val() : variation;
         if (variation != "") {
-            $.post("get_metadata", {template: $("#template").val(), variation: variation},
+            $.post("get_metadata", {
+                        template: $("#template").val(),
+                        variation: variation
+                    },
                     function (data) {
                         if (data.length !== 0) {
                             json = JSON.stringify(data, null, 2);
@@ -242,9 +282,13 @@
             swal(jqxhr.status.toString(), jqxhr.statusText, "error");
         });
         setVariation();
+
         $('input').iCheck({
             checkboxClass: 'icheckbox_flat-green',
             radioClass: 'iradio_flat-green'
+        });
+        $('input').on('ifChecked', function (event) {
+            preview();
         });
     })
 

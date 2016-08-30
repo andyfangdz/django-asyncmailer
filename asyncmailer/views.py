@@ -1,7 +1,6 @@
-from asyncmailer.tasks import async_mail, async_select_and_send
+from asyncmailer.tasks import async_select_and_send
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http.response import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -40,7 +39,8 @@ def find_templates():
                     if re.findall('\.html$', filename):
                         template_name = filename[:-5]  # Drop .html
                     elif re.findall('\.json$', filename):
-                        new_template['variations'].append(filename[:-5])  # Drop .json
+                        new_template['variations'].append(filename[:-5])
+                        # Drop .json
                     else:
                         pass
                 templates[template_name] = new_template
@@ -60,7 +60,9 @@ def get_request_content(request):
 
 @staff_member_required
 def index(request):
-    return render(request, 'asyncmailer/index.html', {'templates': find_templates().keys()})
+    return render(request, 'asyncmailer/index.html', {
+        'templates': find_templates().keys()
+    })
 
 
 @staff_member_required
@@ -153,10 +155,11 @@ def send_test_mail(request):
             'success': False,
             'error': "Template render error."
         })
-    
+
     try:
         for email in emails:
-            async_select_and_send(email, payload["subject"], plain_text, rich_text=rich_text)
+            async_select_and_send(email, payload["subject"], plain_text,
+                                  rich_text=rich_text)
     except:
         return JsonResponse({
             'success': False,
