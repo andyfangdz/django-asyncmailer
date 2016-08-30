@@ -20,7 +20,7 @@ def name_to_file(template_name, variation=None):
 def find_templates():
     template_path = []
 
-    if hasattr(settings, "TEMPLATE_DIR"):
+    if hasattr(settings, "TEMPLATE_DIRS"):
         template_path += settings.TEMPLATE_DIRS
 
     if hasattr(settings, "TEMPLATES") and settings.TEMPLATES:
