@@ -9,7 +9,7 @@ import random
 
 
 @shared_task(default_retry_delay=5, max_retries=3)
-def async_select_and_send(email, title, plain_text, rich_text=None, **kwargs):
+def async_select_and_send(email, title, plain_text, rich_text=None, attachments=None, **kwargs):
     try:
         providers = Provider.objects.all()
         good_providers = sorted([x for x in providers if x.can_send(email)],
@@ -18,21 +18,21 @@ def async_select_and_send(email, title, plain_text, rich_text=None, **kwargs):
         top_providers = [provider for provider in good_providers if
                          provider.preference == top_preference]
         selected_provider = random.choice(top_providers)
-        selected_provider.send(email, title, plain_text, rich_text)
+        selected_provider.send(email, title, plain_text, rich_text, attachments=attachments)
     except Exception as exc:
         raise async_select_and_send.retry(exc=exc)
 
 
-def async_mail(email, title, context_dict=None,
+def async_mail(email, title, context_dict=None, attachments=None,
                template='email-templates/email.html'):
     if len(email) == 1:
         rich_text = render_to_string(template, context_dict)
         plain_text = html2text.html2text(rich_text)
-        async_select_and_send.delay(email[0], title, plain_text, rich_text)
+        async_select_and_send.delay(email[0], title, plain_text, rich_text, attachments=attachments)
     else:
         for address in email:
             async_mail(address, title, context_dict=context_dict[address],
-                       template=template)
+                       attachments=attachments ,template=template)
 
 
 def add_deferred_mail(email, title, template_name, key, delta,

@@ -100,15 +100,21 @@ class Provider(models.Model):
                               password=self.smtp_password,
                               use_tls=self.use_tls)
 
-    def send(self, address, title, content, html_message=None):
+    def send(self, address, title, content, html_message=None, attachments=None):
         msg = EmailMessage(title, content, self.from_address, [address],
                            connection=self.get_connection())
-        if html_message:
+
+        if html_message or attachments:
             msg = EmailMultiAlternatives(title, content, self.from_address,
                                          [address],
                                          connection=self.get_connection()
                                          )
-            msg.attach_alternative(html_message, "text/html")
+            if html_message:
+                msg.attach_alternative(html_message, "text/html")
+            if attachments:
+                for attachment in attachments:
+                    msg.attach_file(attachment)
+
         msg.send()
         msg.connection.close()
         self.add_usage()
