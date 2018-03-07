@@ -100,7 +100,8 @@ class Provider(models.Model):
                               password=self.smtp_password,
                               use_tls=self.use_tls)
 
-    def send(self, address, title, content, html_message=None, attachments=None):
+    def send(self, address, title, content, html_message=None,
+             attachments=None):
         msg = EmailMessage(title, content, self.from_address, [address],
                            connection=self.get_connection())
 
