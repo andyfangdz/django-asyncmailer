@@ -1,8 +1,0 @@
-title: Django-asyncmailer
-description: Async email solution w/ multiple SMTP credentials, load-balancing and blacklist.
-google_analytics: 
-show_downloads: true
-theme: jekyll-theme-cayman
-
-gems:
-  - jekyll-mentions
