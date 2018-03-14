@@ -59,7 +59,7 @@ def remove_deferred_mail(key):
     DeferredMail.remove_by(key)
 
 
-@periodic_task(run_every=crontab(minute=1))
+@periodic_task(run_every=crontab(minute=10))
 def send_deferred_mails():
     for mail in DeferredMail.objects.filter(schedule_time__lt=timezone.now()):
         if mail.template:
