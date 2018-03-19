@@ -39,12 +39,14 @@ def async_mail(email, title, context_dict=None, attachments=None,
 
 
 def add_deferred_mail(email, title, template_name, key, delta,
-                      context_dict=None):
+                      context_dict=None, local_template=None):
     now = timezone.now()
     schedule_time = now + delta
-    template = EmailTemplate.objects.get(name=template_name)
+    template = EmailTemplate.objects.get(name=template_name) \
+        if template_name else None
     m = DeferredMail(
         template=template,
+        local_template=local_template,
         context=context_dict,
         email=email,
         title=title,
@@ -61,7 +63,15 @@ def remove_deferred_mail(key):
 @periodic_task(run_every=crontab(minute=10))
 def send_deferred_mails():
     for mail in DeferredMail.objects.filter(schedule_time__lt=timezone.now()):
-        html_content, text_content = mail.template.render(mail.context)
+        if mail.template:
+            html_content, text_content = mail.template.render(mail.context)
+        else:
+            html_content = render_to_string(
+                mail.local_template,
+                mail.context,
+            )
+            text_content = html2text.html2text(html_content)
+
         async_select_and_send.delay(mail.email,
                                     mail.title,
                                     text_content,

@@ -9,7 +9,8 @@ from premailer import transform
 
 
 class DeferredMail(models.Model):
-    template = models.ForeignKey('EmailTemplate')
+    template = models.ForeignKey('EmailTemplate', null=True, blank=True)
+    local_template = models.CharField(max_length=255, null=True, blank=True)
     context = JSONField(blank=True, null=True)
     email = models.EmailField()
     title = models.CharField(max_length=255)
