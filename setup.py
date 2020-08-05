@@ -60,6 +60,7 @@ setup(
     version=app.__version__,
     description=read('DESCRIPTION'),
     long_description=read('README.rst'),
+    url='https://github.com/andyfangdz/django-asyncmailer',
     license='The MIT License',
     platforms=['OS Independent'],
     keywords='django, async, email',
